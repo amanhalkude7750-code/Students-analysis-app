@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI Analytics | My Courses</title>
+    <!-- Modern Typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .courses-page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .courses-page-header h1 {
+            font-size: 2.2rem;
+        }
+
+        .courses-page-header p {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--grad-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        #courses-loader {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-chart-pie"></i> My Insights</a>
+            <a href="courses.html" class="nav-btn active"><i class="fa-solid fa-book-open"></i> Courses</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search courses, instructors...">
+            </div>
+
+            <div class="user-profile">
+                <div class="notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+
+                <div class="user-info">
+                    <span class="user-name">Alex Researcher</span>
+                    <span class="user-role">Student PRO</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="courses-page-header">
+            <div>
+                <h1>📚 My Learning Path</h1>
+                <p>Pick up where you left off or discover AI-recommended modules.</p>
+            </div>
+            <div class="filter-controls">
+                <button class="filter-btn active">All Courses</button>
+                <button class="filter-btn">In Progress</button>
+                <button class="filter-btn">AI Recommended</button>
+                <button class="filter-btn">Completed</button>
+            </div>
+        </div>
+
+        <section class="recommendations">
+            <div class="courses-grid" id="all-courses-grid">
+                <!-- Populated dynamically via course-scripts.js -->
+                <div id="courses-loader">Fetching course data from ACCESS.AI Backend...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="./course-script.js"></script>
+</body>
+
+</html>

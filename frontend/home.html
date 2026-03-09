@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI | Home</title>
+    <!-- Modern Typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        /* Specific Home Page Styles */
+        body {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .navbar {
+            width: 100%;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        .navbar .logo {
+            margin-bottom: 0;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-blue);
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 800px;
+            margin-top: 10vh;
+            z-index: 10;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn-large {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-large {
+            background: var(--grad-primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 114, 255, 0.4);
+        }
+
+        .btn-primary-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 114, 255, 0.6);
+        }
+
+        .btn-secondary-large {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .btn-secondary-large:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .dashboard-preview {
+            margin-top: 4rem;
+            width: 80%;
+            max-width: 1200px;
+            height: 400px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+        }
+
+        .dashboard-preview::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--bg-dark) 100%);
+        }
+
+        .glow-orb-large {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glow-orb-large"></div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <div class="nav-actions">
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">For Students</a>
+            <a href="#" class="nav-link">For Educators</a>
+            <a href="student-login.html" class="nav-link">Sign In</a>
+            <a href="student-login.html" class="btn-primary"
+                style="text-decoration: none; display: inline-block; width: auto;">Get Started</a>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <h1 class="hero-title">Unlock Academic Potential with <span class="gradient-text">Predictive AI</span></h1>
+        <p class="hero-subtitle">
+            ACCESS.AI leverages advanced Machine Learning telemetry to deliver real-time personalized insights, predict
+            learning outcomes, and instantly bridge knowledge gaps for both students and universities.
+        </p>
+        <div class="hero-buttons">
+            <a href="student-login.html" class="btn-large btn-primary-large"><i class="fa-solid fa-user-graduate"></i>
+                Student Login</a>
+            <a href="teacher-login.html" class="btn-large btn-secondary-large"><i
+                    class="fa-solid fa-chalkboard-user"></i> Teacher Login</a>
+        </div>
+    </section>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI Analytics | Student Dashboard</title>
+    <!-- Modern Typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn active"><i class="fa-solid fa-chart-pie"></i> My Insights</a>
+            <a href="courses.html" class="nav-btn"><i class="fa-solid fa-book-open"></i> Courses</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+
+
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search courses, metrics...">
+            </div>
+
+            <div class="user-profile">
+                <div class="notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+
+                <div class="user-info">
+                    <span class="user-name">Alex Researcher</span>
+                    <span class="user-role">Student PRO</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Welcome Banner / AI Insights -->
+        <section class="banner glass-card" style="margin-bottom: 2rem;">
+            <div class="banner-text">
+                <h1>🧠 AI Insights, <span class="gradient-text">Alex</span></h1>
+                <p id="ui-ai-insight"><strong><i class="fa-solid fa-robot"></i> Analyzing learning
+                        patterns...</strong><br>
+                    Please wait while the ML Models generate your custom pipeline recommendations.</p>
+            </div>
+            <div class="banner-illustration">
+                <div class="glow-orb"></div>
+            </div>
+        </section>
+
+        <!-- Top Metrics Cards: Learning Progress & Study Time -->
+        <div>
+            <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-arrow-up-right-dots"></i> 📈 Learning Progress</h2>
+            <section class="metrics-grid">
+
+                <!-- Performance Prediction Widget (New Data) -->
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon purple-icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <div class="metric-data">
+                        <h3 id="ui-predicted-score">--%</h3>
+                        <p>📊 Performance Prediction</p>
+                        <small>Risk Level: <span id="ui-risk-level">--</span></small>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon progress-icon"><i class="fa-solid fa-trophy"></i></div>
+                    <div class="metric-data">
+                        <h3 id="ui-course-completion">--%</h3>
+                        <p>Course Completion</p>
+                        <small>Module Progress Check</small>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div id="ui-progress-bar" class="progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon time-icon"><i class="fa-solid fa-clock"></i></div>
+                    <div class="metric-data">
+                        <h3 id="ui-daily-time">-- hrs</h3>
+                        <p>Daily Learning Time</p>
+                        <small class="trend up"><i class="fa-solid fa-arrow-trend-up"></i> +15% this week</small>
+                    </div>
+                </div>
+
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon teal-icon"><i class="fa-solid fa-check-double"></i></div>
+                    <div class="metric-data" style="width: 100%;">
+                        <h3>Quiz improvement</h3>
+                        <p id="ui-quiz-imp">Trending Data...</p>
+                        <small class="trend up"><i class="fa-solid fa-arrow-trend-up"></i> Improved by +12%</small>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Data Visualization Section -->
+        <section class="dashboard-widgets">
+
+            <!-- Specific Concept Mastery Scores -->
+            <div class="widget glass-card widget-left">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-spider"></i> Concept Mastery Table</h2>
+                </div>
+                <!-- Radar Chart from previous iteration replaced/augmented by explicit score list as requested -->
+                <div class="mastery-list">
+                    <div class="mastery-row">
+                        <span>Arrays</span>
+                        <div class="mastery-bar-container">
+                            <div class="mastery-bar success" style="width: 85%;"></div>
+                        </div>
+                        <strong>85%</strong>
+                    </div>
+                    <div class="mastery-row">
+                        <span>Recursion</span>
+                        <div class="mastery-bar-container">
+                            <div class="mastery-bar warning" style="width: 60%;"></div>
+                        </div>
+                        <strong>60%</strong>
+                    </div>
+                    <div class="mastery-row">
+                        <span>Graphs</span>
+                        <div class="mastery-bar-container">
+                            <div class="mastery-bar danger" style="width: 45%;"></div>
+                        </div>
+                        <strong>45%</strong>
+                    </div>
+                    <div class="mastery-row">
+                        <span>Dynamic Programming</span>
+                        <div class="mastery-bar-container">
+                            <div class="mastery-bar danger" style="width: 32%;"></div>
+                        </div>
+                        <strong>32%</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Heatmap / Activity Graph Container for "Weekly Learning Trend" -->
+            <div class="widget glass-card activity-widget widget-right">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-chart-column"></i> Weekly Learning Trend</h2>
+                    <select class="dropdown-dark">
+                        <option>This Week</option>
+                        <option>This Month</option>
+                    </select>
+                </div>
+                <!-- Simulated UI for Activity -->
+                <div class="activity-bars">
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 40%;" data-tooltip="Mon: 2hrs"></div>
+                        <span>M</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 80%;" data-tooltip="Tue: 4hrs"></div>
+                        <span>T</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 60%;" data-tooltip="Wed: 3hrs"></div>
+                        <span>W</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 95%;" data-tooltip="Thu: 5hrs"></div>
+                        <span>T</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 30%;" data-tooltip="Fri: 1.5hrs"></div>
+                        <span>F</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 50%;" data-tooltip="Sat: 2.5hrs"></div>
+                        <span>S</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-fill" style="height: 70%;" data-tooltip="Sun: 3.5hrs"></div>
+                        <span>S</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Task 4 Visualizations -->
+        <section class="dashboard-widgets" style="margin-top: 1.5rem;">
+            <!-- Learning Progress Graph -->
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-chart-line"></i> Learning Progress</h2>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Score / Completion % over Time</span>
+                </div>
+                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Engagement Heatmap -->
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-fire-flame-curved"></i> Engagement Heatmap</h2>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Days vs Study Time (hrs)</span>
+                </div>
+                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                    <canvas id="heatmapChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Up Next Recommended Courses Section based on AI -->
+        <section class="recommendations">
+            <div class="section-title">
+                <h2>AI Recommended Actions</h2>
+            </div>
+            <div class="courses-grid" id="ui-recommendation-grid">
+                <!-- Data populated dynamically by frontend JS -->
+                <p style="color: var(--text-muted); padding: 10px;">Loading real-time models...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./script.js"></script>
+</body>
+
+</html>

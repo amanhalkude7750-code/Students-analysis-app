@@ -1,0 +1,59 @@
+🧠 ACCESS.AI Model Evaluation Report
+====================================
+
+Model: RandomForestClassifier
+Accuracy: 0.9120
+Confusion Matrix:
+[[233   0  54]
+ [  0   6  16]
+ [ 18   0 673]]
+Classification Report:
+              precision    recall  f1-score   support
+
+        HIGH       0.93      0.81      0.87       287
+         LOW       1.00      0.27      0.43        22
+      MEDIUM       0.91      0.97      0.94       691
+
+    accuracy                           0.91      1000
+   macro avg       0.94      0.69      0.74      1000
+weighted avg       0.91      0.91      0.91      1000
+
+--------------------------------------------------
+Model: XGBoostClassifier
+Accuracy: 0.9370
+Confusion Matrix:
+[[254   0  33]
+ [  0  12  10]
+ [ 18   2 671]]
+Classification Report:
+              precision    recall  f1-score   support
+
+        HIGH       0.93      0.89      0.91       287
+         LOW       0.86      0.55      0.67        22
+      MEDIUM       0.94      0.97      0.96       691
+
+    accuracy                           0.94      1000
+   macro avg       0.91      0.80      0.84      1000
+weighted avg       0.94      0.94      0.94      1000
+
+--------------------------------------------------
+Model: LogisticRegression
+Accuracy: 0.9530
+Confusion Matrix:
+[[273   0  14]
+ [  0   0  22]
+ [  8   3 680]]
+Classification Report:
+              precision    recall  f1-score   support
+
+        HIGH       0.97      0.95      0.96       287
+         LOW       0.00      0.00      0.00        22
+      MEDIUM       0.95      0.98      0.97       691
+
+    accuracy                           0.95      1000
+   macro avg       0.64      0.65      0.64      1000
+weighted avg       0.94      0.95      0.94      1000
+
+--------------------------------------------------
+
+🏆 BEST SELECTION CAUTIONED FOR PROD: LogisticRegression (Accuracy: 0.9530)
