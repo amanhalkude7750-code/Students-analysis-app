@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Teacher Analytics</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="sidebar">
+
+<h2>LearnAI</h2>
+
+<ul>
+<li>Dashboard</li>
+<li>Students</li>
+<li>Analytics</li>
+<li>Settings</li>
+</ul>
+
+</div>
+
+<div class="main">
+
+<h1>Class Analytics</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Students</h3>
+<p>120</p>
+</div>
+
+<div class="card">
+<h3>Avg Score</h3>
+<p>72%</p>
+</div>
+
+<div class="card">
+<h3>Completion Rate</h3>
+<p>64%</p>
+</div>
+
+</div>
+
+<h2>Video Engagement</h2>
+
+<canvas id="engagementChart"></canvas>
+
+<h2>Students Needing Attention</h2>
+
+<table>
+
+<tr>
+<th>Name</th>
+<th>Risk</th>
+<th>Reason</th>
+</tr>
+
+<tr>
+<td>Rahul</td>
+<td class="high">High</td>
+<td>Low video completion</td>
+</tr>
+
+<tr>
+<td>Priya</td>
+<td class="medium">Medium</td>
+<td>Low quiz score</td>
+</tr>
+
+<tr>
+<td>Amit</td>
+<td class="high">High</td>
+<td>Irregular activity</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/charts.js"></script>
+
+</body>
+</html>
