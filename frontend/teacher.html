@@ -17,53 +17,39 @@
 <body class="teacher-mode">
 
     <!-- Sidebar Navigation -->
-    <aside class="sidebar collapsed" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <div class="logo-icon teacher-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <h2>ACCESS.AI</h2>
-            </div>
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon teacher-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            <h2>ACCESS.AI</h2>
         </div>
         <nav class="nav-links">
-            <a href="teacher.html" class="nav-btn active-teacher" title="Class Analytics"><i class="fa-solid fa-chart-line"></i> <span class="nav-text">Class Analytics</span></a>
-            <a href="#" class="nav-btn" title="Students List"><i class="fa-solid fa-users"></i> <span class="nav-text">Students List</span></a>
-            <a href="login.html" class="nav-btn" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="nav-text">Logout</span></a>
+            <a href="teacher.html" class="nav-btn active-teacher"><i class="fa-solid fa-chart-line"></i> Class
+                Analytics</a>
+            <a href="#" class="nav-btn"><i class="fa-solid fa-users"></i> Students List</a>
+            <a href="leaderboard.html?mode=teacher" class="nav-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
         </nav>
     </aside>
 
     <!-- Main Dashboard -->
     <main class="main-content">
-        <!-- Navigation Navbar -->
-        <nav class="navbar">
-            <div class="navbar-nav">
-                <a href="#overview" class="navbar-link active" title="Overview"><i class="fa-solid fa-home"></i></a>
-                <a href="#metrics" class="navbar-link" title="Metrics"><i class="fa-solid fa-chart-line"></i></a>
-                <a href="#performance" class="navbar-link" title="Performance"><i class="fa-solid fa-users-viewfinder"></i></a>
-                <a href="#at-risk" class="navbar-link" title="At-Risk Students"><i class="fa-solid fa-user-shield"></i></a>
-                <a href="#analytics" class="navbar-link" title="Analytics"><i class="fa-solid fa-chart-bar"></i></a>
-                <a href="#ai-insights" class="navbar-link" title="AI Insights"><i class="fa-solid fa-brain"></i></a>
+        <!-- Top Header -->
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search for a student...">
             </div>
-            
-            <div class="navbar-right">
-                <div class="search-bar navbar-search">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" placeholder="Search for a student...">
-                </div>
 
-                <div class="user-profile navbar-profile">
-                    <div class="user-info">
-                        <span class="user-name">Prof. Vrusha</span>
-                        <span class="user-role teacher-role">Administrator</span>
-                    </div>
-                    <div class="avatar-circle">
-                        <img src="https://ui-avatars.com/api/?name=Prof+Vrusha&background=f97316&color=fff&size=40&font-size=0.4&bold=true" alt="Prof. Vrusha Avatar" class="avatar-img">
-                    </div>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Vrusha</span>
+                    <span class="user-role teacher-role">Adminstrator</span>
                 </div>
             </div>
-        </nav>
+        </header>
 
         <!-- Welcome / Warning Banner -->
-        <section id="overview" class="banner glass-card teacher-banner">
+        <section class="banner glass-card teacher-banner">
             <div class="banner-text">
                 <h1>Class Overview: <span class="gradient-text-orange">Data Structures</span></h1>
                 <p>AI Insights: 10 students are exhibiting high drop-off risks. Dynamic Programming remains the highest
@@ -72,7 +58,7 @@
         </section>
 
         <!-- Top Metrics: Class Engagement -->
-        <section id="metrics" class="metrics-grid">
+        <section class="metrics-grid">
             <div class="metric-card glass-card">
                 <div class="metric-icon teal-icon"><i class="fa-solid fa-video"></i></div>
                 <div class="metric-data">
@@ -101,7 +87,7 @@
         <section class="dashboard-widgets">
 
             <!-- Performance & Difficult Topics -->
-            <div class="widget glass-card" id="performance">
+            <div class="widget glass-card">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-users-viewfinder"></i> Student Performance Distribution</h2>
                 </div>
@@ -136,10 +122,19 @@
                     <span class="bad-tag">2. Graph Traversal <i class="fa-solid fa-arrow-trend-down"></i></span>
                     <span class="bad-tag">3. Recursion <i class="fa-solid fa-arrow-trend-down"></i></span>
                 </div>
+
+                <div class="widget-header" style="margin-top: 2rem;">
+                    <h2><i class="fa-solid fa-trophy" style="color: gold"></i> Top Performing Students</h2>
+                </div>
+                <!-- Mini Leaderboard -->
+                <div id="teacher-mini-leaderboard"
+                    style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                    <span style="color: var(--text-muted)">Loading leaderboard data...</span>
+                </div>
             </div>
 
             <!-- At Risk Students Table -->
-            <div class="widget glass-card" id="at-risk">
+            <div class="widget glass-card">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-user-shield"></i> At-Risk Students Intervention</h2>
                     <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem;">Export List</button>
@@ -204,7 +199,8 @@
         </section>
 
         <!-- Advanced Visualizations (Tasks 4.3 - 4.5) -->
-        <section id="analytics" class="dashboard-widgets">
+        <section class="dashboard-widgets"
+            style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 1.5rem;">
 
             <!-- Task 4.3 Topic Difficulty Chart -->
             <div class="widget glass-card">
@@ -228,21 +224,35 @@
                 </div>
             </div>
 
-            <!-- Task 4.5 Video Interaction Heatmap -->
-            <div class="widget glass-card">
+            <!-- Task 4.5 Video Interaction Heatmap (Now Live) -->
+            <div class="widget glass-card" style="grid-column: 1 / -1;">
                 <div class="widget-header">
-                    <h2><i class="fa-solid fa-fire"></i> Video Interaction Heatmap</h2>
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Timestamp vs Replay Count</span>
+                    <h2><i class="fa-solid fa-fire"></i> Live Interaction Heatmap & Difficulty Analysis</h2>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Timestamp vs Frictive Events
+                        (Pause/Rewind)</span>
                 </div>
-                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
-                    <canvas id="videoHeatmapChart"></canvas>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+                    <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
+                        <canvas id="videoLiveHeatmapChart"></canvas>
+                    </div>
+
+                    <!-- Dynamic Text Readout for AI Analytics -->
+                    <div style="padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem;"><i class="fa-solid fa-chart-line"></i>
+                            Analytics Engine</h3>
+                        <div id="video-analytics-content"
+                            style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                            <p>Loading real-time telemetry...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </section>
 
         <!-- Explainable AI Section -->
-        <section id="ai-insights" class="dashboard-widgets">
+        <section class="dashboard-widgets" style="margin-top: 1.5rem;">
             <div class="widget glass-card" style="grid-column: 1 / -1;">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-brain"></i> Explainable AI: Feature Importance</h2>

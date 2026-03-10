@@ -263,6 +263,174 @@ app.get('/api/recommendations/:student_id', (req, res) => {
     });
 });
 
+// -----------------------------------------------------
+// TASK - Learning Notes & AI Summarization
+// -----------------------------------------------------
+
+const savedNotes = [];
+
+/**
+ * @route POST /api/v1/notes
+ * @desc Save student notes and generate an AI summary
+ */
+app.post('/api/v1/notes', (req, res) => {
+    const { student_id, course_id, notes } = req.body;
+
+    if (!student_id || !course_id || !notes) {
+        return res.status(400).json({ success: false, message: "Missing required fields." });
+    }
+
+    savedNotes.push({ student_id, course_id, notes, timestamp: new Date() });
+
+    // Simulate an AI summarization (or integrate real LLM if desired)
+    const summary = `AI Summary: You mainly discussed keywords like "${notes.split(' ').slice(0, 3).join(' ')}". Your notes indicate a strong focus on core definitions but might need more practical examples. Great job organizing your thoughts!`;
+
+    res.json({
+        success: true,
+        summary: summary
+    });
+});
+
+/**
+ * @route GET /api/v1/notes/:student_id
+ * @desc Get all saved notes for a student
+ */
+app.get('/api/v1/notes/:student_id', (req, res) => {
+    const { student_id } = req.params;
+    const studentNotes = savedNotes.filter(n => n.student_id == student_id);
+    res.json({ success: true, data: studentNotes });
+});
+
+// -----------------------------------------------------
+// TASK - Video Interaction Analytics
+// -----------------------------------------------------
+
+/**
+ * events stored: 
+ * { course_id, student_id, action: "pause"|"rewind"|"skip", timestamp_sec: number, actual_time: Date }
+ */
+const videoInteractions = [];
+
+/**
+ * @route POST /api/v1/video-events
+ * @desc Log a student interacting with the video timeline
+ */
+app.post('/api/v1/video-events', (req, res) => {
+    const { course_id, student_id, action, timestamp_sec } = req.body;
+
+    if (!course_id || !student_id || !action || timestamp_sec === undefined) {
+        return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    videoInteractions.push({
+        course_id,
+        student_id,
+        action,
+        timestamp_sec: Math.floor(timestamp_sec),
+        actual_time: new Date()
+    });
+
+    res.json({ success: true, message: "Event logged" });
+});
+
+/**
+ * @route GET /api/v1/video-analytics/:course_id
+ * @desc Process raw interactions into difficulty hotspots
+ */
+app.get('/api/v1/video-analytics/:course_id', (req, res) => {
+    const { course_id } = req.params;
+
+    // Filter events for this video
+    const courseEvents = videoInteractions.filter(e => e.course_id == course_id);
+
+    // Count views (assuming unique student IDs hitting play implies a view)
+    const uniqueStudents = new Set(courseEvents.map(e => e.student_id)).size;
+    const totalViews = uniqueStudents > 0 ? uniqueStudents : 15; // fallback mock data if 0
+
+    // Aggregate timestamps
+    const timeBlocks = {};
+
+    courseEvents.forEach(event => {
+        // Group by 10-second buckets to identify "hotspots" instead of specific seconds
+        const bucket = Math.floor(event.timestamp_sec / 10) * 10;
+
+        if (!timeBlocks[bucket]) {
+            timeBlocks[bucket] = { pause: 0, rewind: 0, skip: 0, total_friction: 0 };
+        }
+
+        timeBlocks[bucket][event.action]++;
+
+        // Calculate a "friction" score. Rewinds and pauses imply difficulty. Skips imply boredom/too easy.
+        if (event.action === "rewind") timeBlocks[bucket].total_friction += 2;
+        if (event.action === "pause") timeBlocks[bucket].total_friction += 1;
+    });
+
+    // Format into array for chart consumption
+    const sortedHotspots = Object.keys(timeBlocks)
+        .map(sec => ({
+            timestamp_sec: parseInt(sec),
+            formatted_time: `${Math.floor(sec / 60)}:${(parseInt(sec) % 60).toString().padStart(2, '0')}`,
+            metrics: timeBlocks[sec]
+        }))
+        .sort((a, b) => a.timestamp_sec - b.timestamp_sec);
+
+    // Find the hardest section
+    let hardestSection = null;
+    let maxFriction = 0;
+    sortedHotspots.forEach(spot => {
+        if (spot.metrics.total_friction > maxFriction) {
+            maxFriction = spot.metrics.total_friction;
+            hardestSection = spot;
+        }
+    });
+
+    res.json({
+        success: true,
+        data: {
+            total_views: totalViews,
+            hotspots: sortedHotspots,
+            hardest_section: hardestSection
+        }
+    });
+});
+
+// -----------------------------------------------------
+// TASK - Quiz & Leaderboard
+// -----------------------------------------------------
+
+// Store leaderboard entries in-memory
+const leaderboardData = [
+    { student_id: 102, student_name: "Sneha P.", score: 90, timestamp: new Date() },
+    { student_id: 103, student_name: "Rahul K.", score: 40, timestamp: new Date() },
+    { student_id: 104, student_name: "Priya S.", score: 85, timestamp: new Date() }
+];
+
+/**
+ * @route POST /api/v1/quiz
+ * @desc Save quiz score and update leaderboard
+ */
+app.post('/api/v1/quiz', (req, res) => {
+    const { student_id, student_name, score } = req.body;
+
+    if (!student_id || score === undefined) {
+        return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    leaderboardData.push({ student_id, student_name: student_name || "Student", score, timestamp: new Date() });
+
+    res.json({ success: true, message: "Quiz result saved successfully" });
+});
+
+/**
+ * @route GET /api/v1/leaderboard
+ * @desc Get ranked leaderboard
+ */
+app.get('/api/v1/leaderboard', (req, res) => {
+    // Sort descending by score
+    const sorted = [...leaderboardData].sort((a, b) => b.score - a.score);
+    res.json({ success: true, data: sorted });
+});
+
 app.listen(PORT, () => {
     console.log(`📡 ACCESS.AI Analytics API running on http://localhost:${PORT}`);
     console.log(`Try fetching events: http://localhost:${PORT}/api/v1/events`);

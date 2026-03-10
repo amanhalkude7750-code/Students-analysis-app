@@ -65,10 +65,11 @@ body.teacher-mode {
     border: 1px solid var(--border-light);
     border-radius: 20px;
     box-shadow: var(--shadow-soft);
-    transition: box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
+    transform: translateY(-3px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
     border-color: rgba(0, 0, 0, 0.15);
 }
@@ -102,42 +103,13 @@ h4 {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: var(--glass-blur);
     z-index: 100;
-    transition: width 0.3s ease, padding 0.3s ease;
-}
-
-.sidebar.collapsed {
-    width: 80px;
-    padding: 2rem 0.5rem;
-}
-
-.sidebar-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 3rem;
-    position: relative;
-}
-
-.sidebar.collapsed .sidebar-header {
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
 }
 
 .logo {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 0;
-    transition: all 0.3s ease;
-}
-
-.sidebar.collapsed .logo {
-    gap: 0;
-}
-
-.sidebar.collapsed .logo h2 {
-    display: none;
+    margin-bottom: 3rem;
 }
 
 .logo-icon {
@@ -151,7 +123,6 @@ h4 {
     color: white;
     font-size: 1.2rem;
     box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
-    flex-shrink: 0;
 }
 
 .logo-icon.teacher-icon {
@@ -183,26 +154,10 @@ h4 {
     transition: all 0.2s ease;
 }
 
-.sidebar.collapsed .nav-btn {
-    padding: 0.8rem 0.5rem;
-    justify-content: center;
-}
-
 .nav-btn i {
     font-size: 1.2rem;
     width: 24px;
     text-align: center;
-    flex-shrink: 0;
-}
-
-.nav-text {
-    white-space: nowrap;
-    overflow: hidden;
-    transition: opacity 0.2s ease;
-}
-
-.sidebar.collapsed .nav-text {
-    display: none;
 }
 
 .nav-btn:hover {
@@ -253,118 +208,27 @@ h4 {
 /* --- Main Content --- */
 .main-content {
     flex: 1;
-    width: 100%;
-    min-width: 0;
-    padding: 0;
-    padding-bottom: 3rem;
+    padding: 2rem 3rem;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 2rem;
 }
 
-/* --- Navigation Navbar --- */
-.navbar {
+.topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    border-bottom: 1px solid var(--border-light);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    gap: 1rem;
-    width: 100%;
-    min-width: 0;
-}
-
-.navbar-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-width: 0;
-    flex-wrap: nowrap;
-}
-
-.navbar-link {
-    text-decoration: none;
-    color: var(--text-muted);
-    padding: 0.5rem 0.6rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 500;
-    font-size: 0.9rem;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-    position: relative;
-    width: 36px;
-    height: 36px;
-}
-
-.navbar-link i {
-    font-size: 0.95rem;
-}
-
-.navbar-link:hover {
-    color: var(--text-main);
-    background: rgba(0, 0, 0, 0.06);
-}
-
-.navbar-link.active {
-    color: var(--accent-orange);
-}
-
-.navbar-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -1rem;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-orange);
-    border-radius: 1px;
-}
-
-.navbar-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: auto;
-    min-width: 0;
-}
-
-.navbar-search {
-    width: 240px;
-    min-width: auto;
-}
-
-.navbar-profile {
-    gap: 0.8rem;
-    display: flex;
-    align-items: center;
-    min-width: 0;
 }
 
 .search-bar {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-light);
-    padding: 0.6rem 1rem;
-    border-radius: 18px;
-    transition: all 0.2s ease;
-    font-size: 0.85rem;
-}
-
-.search-bar:focus-within {
-    background: rgba(0, 0, 0, 0.08);
-    border-color: var(--accent-orange);
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    padding: 0.8rem 1.2rem;
+    border-radius: 20px;
+    width: 350px;
 }
 
 .search-bar input {
@@ -374,70 +238,26 @@ h4 {
     width: 100%;
     outline: none;
     font-family: var(--font-body);
-    font-size: 0.9rem;
-}
-
-.search-bar i {
-    color: var(--text-muted);
 }
 
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 1rem;
-}
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 2rem 3rem;
+    gap: 1.5rem;
 }
 
 .user-info {
     display: flex;
     flex-direction: column;
-    min-width: 0;
-}
-
-.user-name {
-    font-size: 0.9rem;
-    font-weight: 500;
 }
 
 .user-role {
     color: var(--accent-teal);
-    font-size: 0.7rem;
+    font-size: 0.8rem;
 }
 
 .teacher-role {
     color: var(--accent-orange);
-}
-
-/* Avatar Styling */
-.avatar-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid var(--accent-orange);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
-    flex-shrink: 0;
-    background: linear-gradient(135deg, var(--accent-orange) 0%, var(--accent-red) 100%);
-    transition: box-shadow 0.2s ease;
-}
-
-.avatar-circle:hover {
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
-}
-
-.avatar-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
 }
 
 /* Banner / Warning Text */
@@ -448,7 +268,6 @@ h4 {
     padding: 2.5rem;
     position: relative;
     overflow: hidden;
-    margin: 2rem 2rem 0 2rem;
 }
 
 .banner-text {
@@ -474,9 +293,8 @@ h4 {
 /* Base Metrics Grid */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
-    margin: 2rem;
 }
 
 .metric-card {
@@ -568,24 +386,8 @@ h4 {
 /* Dashboard Widgets Split */
 .dashboard-widgets {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1.2fr 1fr;
     gap: 1.5rem;
-    margin: 2rem;
-}
-
-@media (min-width: 1400px) {
-    .dashboard-widgets {
-        grid-template-columns: 1.2fr 1fr;
-    }
-}
-
-/* Analytics section with flexible columns */
-#analytics.dashboard-widgets {
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-}
-
-#ai-insights.dashboard-widgets {
-    grid-template-columns: 1 / -1;
 }
 
 .widget {
@@ -875,4 +677,132 @@ h4 {
 .duration {
     color: var(--text-muted);
     font-size: 0.85rem;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .courses-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .banner-text {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    /* Sidebar becomes a top nav */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: column;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .logo {
+        margin-bottom: 1rem;
+        justify-content: center;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .nav-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .user-profile {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .metrics-grid,
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .banner {
+        flex-direction: column;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .banner-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .widget {
+        overflow-x: auto;
+    }
+
+    .activity-bars {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .login-container {
+        padding: 1.5rem !important;
+    }
+
+    .metric-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .metric-icon {
+        margin-bottom: 0.5rem;
+    }
+
+    .banner-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .course-content {
+        padding: 1rem;
+    }
 }

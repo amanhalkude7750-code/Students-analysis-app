@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                             
                             <div class="course-footer" style="padding-top: 1rem; margin-top: auto;">
                                 <span class="duration"><i class="fa-regular fa-clock"></i> ${course.estCompletionTime}</span>
-                                <button class="btn-primary" style="padding: 0.4rem 1rem; width: auto; background: ${course.progress === 100 ? 'var(--accent-green)' : 'var(--grad-primary)'}">
+                                <button onclick="window.location.href='course-player.html?id=${course.id}'" class="btn-primary" style="padding: 0.4rem 1rem; width: auto; background: ${course.progress === 100 ? 'var(--accent-green)' : 'var(--grad-primary)'}">
                                     ${course.progress === 100 ? 'Review' : (course.progress === 0 ? 'Start' : 'Resume')}
                                 </button>
                             </div>
