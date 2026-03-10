@@ -12,64 +12,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (aiBannerEl) aiBannerEl.textContent = user.name.split(' ')[0];
     }
 
-    try {
-        const dashboardRef = fetch('http://localhost:3000/api/v1/dashboard');
-        const coursesRef = fetch('http://localhost:3000/api/v1/courses');
-
-        const [dashRes, coursesRes] = await Promise.all([dashboardRef, coursesRef]);
-
-        const dashData = await dashRes.json();
-        const coursesData = await coursesRes.json();
-
-        if (dashData.success && dashData.data) {
-            const d = dashData.data;
-            document.getElementById('ui-predicted-score').textContent = d.predictedScore + '%';
-            document.getElementById('ui-risk-level').textContent = d.riskLevel;
-            document.getElementById('ui-course-completion').textContent = d.courseCompletion + '%';
-            document.getElementById('ui-progress-bar').style.width = d.courseCompletion + '%';
-            document.getElementById('ui-daily-time').textContent = d.dailyTime + ' hrs';
-            document.getElementById('ui-quiz-imp').textContent = d.quizImp;
-            document.getElementById('ui-ai-insight').innerHTML = `<strong><i class="fa-solid fa-robot"></i> AI Analysis Complete</strong><br>${d.aiInsight}`;
-
-            // Initialize charts
-            const ctxProgress = document.getElementById('progressChart').getContext('2d');
-            new Chart(ctxProgress, {
-                type: 'line',
-                data: {
-                    labels: d.chartData.progressLabels,
-                    datasets: [{
-                        label: 'Progress Score',
-                        data: d.chartData.progressScores,
-                        borderColor: '#9d4edd',
-                        backgroundColor: 'rgba(157, 78, 221, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
-
-            const ctxHeatmap = document.getElementById('heatmapChart').getContext('2d');
-            new Chart(ctxHeatmap, {
-                type: 'bar',
-                data: {
-                    labels: d.chartData.heatmapDays,
-                    datasets: [{
-                        label: 'Study Hours',
-                        data: d.chartData.heatmapHours,
-                        backgroundColor: '#06d6a0',
-                        borderRadius: 4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+    async function loadFirebaseDashboard() {
+        if (!window.db) {
+            setTimeout(loadFirebaseDashboard, 500);
+            return;
         }
 
-        if (coursesData.success && coursesData.data) {
+        try {
+            // Fetch Dashboard Data
+            const dashRef = window.collection(window.db, "dashboard");
+            const dashSnap = await window.getDocs(dashRef);
+
+            if (!dashSnap.empty) {
+                const d = dashSnap.docs[0].data();
+                document.getElementById('ui-predicted-score').textContent = d.predictedScore + '%';
+                document.getElementById('ui-risk-level').textContent = d.riskLevel;
+                document.getElementById('ui-course-completion').textContent = d.courseCompletion + '%';
+                document.getElementById('ui-progress-bar').style.width = d.courseCompletion + '%';
+                document.getElementById('ui-daily-time').textContent = d.dailyTime + ' hrs';
+                document.getElementById('ui-quiz-imp').textContent = d.quizImp;
+                document.getElementById('ui-ai-insight').innerHTML = `<strong><i class="fa-solid fa-robot"></i> AI Analysis Complete</strong><br>${d.aiInsight}`;
+
+                // Initialize charts
+                const ctxProgress = document.getElementById('progressChart').getContext('2d');
+                new Chart(ctxProgress, {
+                    type: 'line',
+                    data: {
+                        labels: d.chartData.progressLabels,
+                        datasets: [{
+                            label: 'Progress Score',
+                            data: d.chartData.progressScores,
+                            borderColor: '#9d4edd',
+                            backgroundColor: 'rgba(157, 78, 221, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                const ctxHeatmap = document.getElementById('heatmapChart').getContext('2d');
+                new Chart(ctxHeatmap, {
+                    type: 'bar',
+                    data: {
+                        labels: d.chartData.heatmapDays,
+                        datasets: [{
+                            label: 'Study Hours',
+                            data: d.chartData.heatmapHours,
+                            backgroundColor: '#06d6a0',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // Fetch AI Recommended Courses
+            const coursesRef = window.collection(window.db, "courses");
+            const coursesSnap = await window.getDocs(coursesRef);
+
             const grid = document.getElementById('ui-recommendation-grid');
             grid.innerHTML = '';
-            coursesData.data.forEach(course => {
+
+            coursesSnap.forEach(doc => {
+                const course = doc.data();
                 if (!course.aiRecommended) return;
 
                 let borderStyle = '1px solid var(--accent-purple)';
@@ -78,9 +85,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 const card = `
                     <div class="course-card glass-card" style="border: ${borderStyle};">
-                        ${course.thumbnail.includes('.png')
-                        ? `<img src="${course.thumbnail}" class="course-img" alt="Thumbnail">`
-                        : `<div class="course-img ${course.thumbnail}"></div>`
+                        ${course.thumbnail.includes('-icon')
+                        ? `<div class="course-img ${course.thumbnail}"></div>`
+                        : `<img src="${course.thumbnail}" class="course-img" alt="Thumbnail">`
                     }
                         <div class="course-content">
                             ${aiTagHtml}
@@ -106,9 +113,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `;
                 grid.innerHTML += card;
             });
+        } catch (err) {
+            console.error("Firebase Dashboard error:", err);
+            document.getElementById('ui-ai-insight').innerHTML = `<strong style="color: red;">Error loading dashboard data from Firebase.</strong>`;
         }
-    } catch (err) {
-        console.error("Dashboard error:", err);
-        document.getElementById('ui-ai-insight').innerHTML = `<strong style="color: red;">Error loading dashboard data. Cannot reach API.</strong>`;
     }
+
+    loadFirebaseDashboard();
 });
