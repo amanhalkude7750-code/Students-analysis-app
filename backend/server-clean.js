@@ -188,24 +188,8 @@ app.get('/api/v1/students/:student_id/activity', (req, res) => {
             return res.status(404).json({ success: false, message: "Student not found" });
         }
 
-        // Calculate last activity time based on engagement (more recently active = higher engagement)
-        // Engagement score 0.8-0.95 = active in last 10-30 mins, 0.5-0.8 = 30-120 mins ago, <0.5 = 2+ hours ago
-        let minutesAgo;
-        const engagementScore = parseFloat(student.engagement_score);
-        
-        if (engagementScore >= 0.8) {
-            minutesAgo = Math.round(Math.random() * 25); // 0-25 mins ago
-        } else if (engagementScore >= 0.6) {
-            minutesAgo = Math.round(30 + Math.random() * 60); // 30-90 mins ago
-        } else {
-            minutesAgo = Math.round(120 + Math.random() * 240); // 2-6 hours ago
-        }
-        
-        const lastActivityTime = new Date(Date.now() - minutesAgo * 60000);
-
         const activity = {
             student_id: student.student_id,
-            last_activity_time: lastActivityTime.toISOString(),
             weekly_pattern: generateWeeklyPattern(student),
             engagement_timeline: generateEngagementTimeline(student),
             learning_velocity: calculateLearningVelocity(student),
@@ -218,169 +202,6 @@ app.get('/api/v1/students/:student_id/activity', (req, res) => {
         };
 
         res.json({ success: true, data: activity });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-// Save student notes and generate summary
-app.post('/api/v1/notes', (req, res) => {
-    try {
-        const { student_id, course_id, notes } = req.body;
-        
-        if (!notes || notes.trim().length === 0) {
-            return res.status(400).json({ success: false, message: "Notes cannot be empty" });
-        }
-
-        // Simple AI-like summarization: extract key phrases
-        const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        const words = notes.split(/\s+/).filter(w => w.trim().length > 3);
-        
-        // Create a summary by selecting important sentences
-        let summary = '';
-        if (sentences.length > 0) {
-            // Take first and longest sentences as summary
-            const importantSentences = sentences
-                .sort((a, b) => b.trim().split(/\s+/).length - a.trim().split(/\s+/).length)
-                .slice(0, Math.min(3, sentences.length))
-                .map(s => s.trim());
-            
-            summary = importantSentences.join('. ') + '.';
-        }
-
-        // If summary is still too long or empty, use a different approach
-        if (summary.length === 0 || summary.length > 200) {
-            summary = notes.substring(0, 150).trim() + (notes.length > 150 ? '...' : '');
-        }
-
-        res.json({
-            success: true,
-            message: "Notes saved successfully",
-            summary: `Summary: ${summary}`,
-            notes_count: sentences.length,
-            words_count: words.length
-        });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-// Get leaderboard rankings
-app.get('/api/v1/leaderboard', (req, res) => {
-    try {
-        // Create leaderboard based on quiz accuracy scores
-        const leaderboard = studentDataset
-            .map(student => ({
-                student_id: student.student_id,
-                student_name: `Student #${student.student_id}`,
-                score: Math.round(parseFloat(student.quiz_accuracy) * 100),
-                engagement: parseFloat(student.engagement_score),
-                marks: student.term_marks,
-                standard: student.standard
-            }))
-            .sort((a, b) => {
-                // Sort by quiz accuracy first, then by marks
-                if (b.score !== a.score) {
-                    return b.score - a.score;
-                }
-                return b.marks - a.marks;
-            })
-            .slice(0, 50); // Return top 50 students
-
-        res.json({
-            success: true,
-            data: leaderboard,
-            totalStudents: studentDataset.length,
-            topScore: leaderboard[0]?.score || 0
-        });
-    } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
-    }
-});
-
-// Get all available courses
-app.get('/api/v1/courses', (req, res) => {
-    try {
-        const courses = [
-            {
-                id: 1,
-                title: 'Advanced Mathematics - Algebra',
-                instructor: 'Prof. James Wilson',
-                thumbnail: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                totalModules: 12,
-                completedModules: 8,
-                progress: 67,
-                estCompletionTime: '4 weeks',
-                aiRecommended: true,
-                aiReason: 'Recommended based on your performance in Algebra fundamentals'
-            },
-            {
-                id: 2,
-                title: 'Science - Physics Basics',
-                instructor: 'Dr. Sarah Chen',
-                thumbnail: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                totalModules: 10,
-                completedModules: 5,
-                progress: 50,
-                estCompletionTime: '6 weeks',
-                aiRecommended: true,
-                aiReason: 'AI predicts high success rate based on your learning patterns'
-            },
-            {
-                id: 3,
-                title: 'English Language - Literature',
-                instructor: 'Ms. Emma Roberts',
-                thumbnail: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                totalModules: 15,
-                completedModules: 10,
-                progress: 67,
-                estCompletionTime: '8 weeks',
-                aiRecommended: false,
-                aiReason: ''
-            },
-            {
-                id: 4,
-                title: 'History & Social Studies',
-                instructor: 'Dr. Michael Brown',
-                thumbnail: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-                totalModules: 8,
-                completedModules: 3,
-                progress: 38,
-                estCompletionTime: '5 weeks',
-                aiRecommended: false,
-                aiReason: ''
-            },
-            {
-                id: 5,
-                title: 'Computer Science - Python',
-                instructor: 'Prof. Alex Kumar',
-                thumbnail: 'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
-                totalModules: 14,
-                completedModules: 14,
-                progress: 100,
-                estCompletionTime: 'Completed',
-                aiRecommended: true,
-                aiReason: 'You excelled in this course! Consider advanced modules'
-            },
-            {
-                id: 6,
-                title: 'Biology - Human Anatomy',
-                instructor: 'Dr. Lisa Park',
-                thumbnail: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-                totalModules: 11,
-                completedModules: 0,
-                progress: 0,
-                estCompletionTime: '7 weeks',
-                aiRecommended: false,
-                aiReason: ''
-            }
-        ];
-
-        res.json({
-            success: true,
-            data: courses,
-            totalCourses: courses.length
-        });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
@@ -602,8 +423,5 @@ app.listen(PORT, () => {
     console.log(`   GET /api/v1/students`);
     console.log(`   GET /api/v1/students/:id`);
     console.log(`   GET /api/v1/students/analytics/dashboard`);
-    console.log(`   GET /api/v1/students/:id/activity`);
-    console.log(`   POST /api/v1/notes`);
-    console.log(`   GET /api/v1/leaderboard`);
-    console.log(`   GET /api/v1/courses\n`);
+    console.log(`   GET /api/v1/students/:id/activity\n`);
 });

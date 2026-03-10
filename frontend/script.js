@@ -3,39 +3,75 @@ document.addEventListener('DOMContentLoaded', async () => {
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.font.family = "'Inter', sans-serif";
 
-    // 1. FETCH ACTUAL LIVE DATA FROM BACKEND API
-    let studentData = null;
-    let fallbackData = false;
+    // ====== GET STUDENT ID FROM URL OR USE FIRST STUDENT ======
+    const urlParams = new URLSearchParams(window.location.search);
+    let studentId = urlParams.get('id') || localStorage.getItem('studentId') || 1001;
+
+    // 1. FETCH ACTUAL STUDENT DATA FROM BACKEND CSV
+    let studentAnalysis = null;
     try {
-        const response = await fetch('http://localhost:3000/api/v1/analytics');
+        const response = await fetch(`http://localhost:3000/api/v1/students/${studentId}`);
         const db = await response.json();
-        // Just grab the first student's analytics for the Student Dashboard demo
-        if (db && db.data && db.data.mlDataset && db.data.mlDataset.length > 0) {
-            studentData = db.data.mlDataset[0];
+        if (db.success && db.data) {
+            studentAnalysis = db.data;
+            
+            // Update welcome banner with actual student info
+            document.querySelector('.user-name').textContent = `Student ${studentAnalysis.personal_info.student_id}`;
+            document.querySelector('.user-role').textContent = `${studentAnalysis.personal_info.standard} - ${studentAnalysis.personal_info.subject}`;
         }
     } catch (err) {
-        console.warn("Backend not reachable. Ensure server.js is running. Falling back to mock data.", err);
-        fallbackData = true;
+        console.warn("Failed to fetch student analysis from CSV. Using analytics DB.", err);
+    }
+
+    // FALLBACK: Fetch from analytics DB if CSV fetch fails
+    let studentData = null;
+    if (!studentAnalysis) {
+        try {
+            const response = await fetch('http://localhost:3000/api/v1/analytics');
+            const db = await response.json();
+            if (db && db.data && db.data.mlDataset && db.data.mlDataset.length > 0) {
+                studentData = db.data.mlDataset[0];
+            }
+        } catch (err) {
+            console.warn("Backend not reachable. Falling back to mock data.", err);
+        }
     }
 
     // Dynamic Variables based on fetching
-    let completionScore = fallbackData ? 60 : Math.round(studentData.avg_video_completion * 100);
-    let quizAcc = fallbackData ? 65 : Math.round(studentData.quiz_accuracy);
-    let studyDaily = fallbackData ? 2.5 : studentData.study_time_per_day;
-    let revisitRate = fallbackData ? 0.3 : studentData.revisit_rate;
+    let completionScore, quizAcc, studyDaily, revisitRate;
+    
+    if (studentAnalysis) {
+        // Use CSV data
+        completionScore = parseFloat(studentAnalysis.engagement_metrics.video_completion);
+        quizAcc = parseFloat(studentAnalysis.academic_metrics.quiz_accuracy);
+        studyDaily = studentAnalysis.engagement_metrics.study_time_hours;
+        revisitRate = 3; // Mock value
+    } else if (studentData) {
+        // Use analytics DB
+        completionScore = Math.round(studentData.avg_video_completion * 100);
+        quizAcc = Math.round(studentData.quiz_accuracy);
+        studyDaily = studentData.study_time_per_day;
+        revisitRate = studentData.revisit_rate;
+    } else {
+        // Fallback mock
+        completionScore = 60;
+        quizAcc = 65;
+        studyDaily = 2.5;
+        revisitRate = 0.3;
+    }
 
-    let studyTime = fallbackData ? [1.5, 4.2, 3.0, 5.5, 2.0, 1.0, 3.8] : [
+    let studyTime = [
         studyDaily / 2, studyDaily, studyDaily * 1.5, studyDaily * 0.5, studyDaily * 1.2, studyDaily * 0.8, studyDaily
     ];
 
-    // Populating Basic DOM Elements
+    // Populating Basic DOM Elements with actual data
     document.getElementById('ui-course-completion').innerText = `${completionScore}%`;
     document.getElementById('ui-progress-bar').style.width = `${completionScore}%`;
     document.getElementById('ui-daily-time').innerText = `${studyDaily.toFixed(1)} hrs`;
 
     // 2. FETCH PREDICTIONS FROM AI PIPELINE SERVICES
     try {
-        // AI Predicton - Final Score
+        // AI Prediction - Final Score
         const resPerf = await fetch('http://localhost:3000/api/ai/predict-performance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -47,27 +83,31 @@ document.addEventListener('DOMContentLoaded', async () => {
             })
         });
         const perfData = await resPerf.json();
-        document.getElementById('ui-predicted-score').innerText = "78%";
+        document.getElementById('ui-predicted-score').innerText = perfData.data?.predicted_score || "78%";
 
-        // AI Prediction - Dropout Risk using Real AI Service
+        // AI Prediction - Dropout Risk
         const resRisk = await fetch('http://localhost:3000/api/ai/predict-risk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 study_time: studyDaily * 7,
                 quiz_accuracy: quizAcc / 100,
-                assignment_score: 85,
-                attendance_rate: 0.9,
+                assignment_score: studentAnalysis?.academic_metrics?.assignment_score || 85,
+                attendance_rate: studentAnalysis?.academic_metrics?.attendance_rate 
+                    ? parseFloat(studentAnalysis.academic_metrics.attendance_rate) / 100 
+                    : 0.9,
                 video_completion: completionScore / 100,
-                practice_attempts: 12,
-                session_consistency: 5,
-                pause_frequency: 3,
-                rewind_frequency: 2,
-                engagement_score: 0.8,
-                term_marks: 85,
-                total_attendance_days: 190,
-                extracurricular_hours: 5,
-                discipline_incidents: 0
+                practice_attempts: studentAnalysis?.engagement_metrics?.practice_attempts || 12,
+                session_consistency: studentAnalysis?.engagement_metrics?.session_consistency || 5,
+                pause_frequency: studentAnalysis?.learning_behavior?.pause_frequency || 3,
+                rewind_frequency: studentAnalysis?.learning_behavior?.rewind_frequency || 2,
+                engagement_score: studentAnalysis?.engagement_metrics?.engagement_score 
+                    ? parseFloat(studentAnalysis.engagement_metrics.engagement_score) / 100
+                    : 0.8,
+                term_marks: studentAnalysis?.academic_metrics?.term_marks || 85,
+                total_attendance_days: studentAnalysis?.academic_metrics?.total_attendance_days || 190,
+                extracurricular_hours: studentAnalysis?.learning_behavior?.extracurricular_hours || 5,
+                discipline_incidents: studentAnalysis?.learning_behavior?.discipline_incidents || 0
             })
         });
         const riskResponse = await resRisk.json();
@@ -85,19 +125,25 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Task 8: Fetch Complete Recommendation Pipeline
-        const resPipeline = await fetch('http://localhost:3000/api/recommendations/101');
+        const resPipeline = await fetch(`http://localhost:3000/api/recommendations/${studentId}`);
         const pipelineData = await resPipeline.json();
 
-        const weakTopics = pipelineData.data.weak_topics;
-        const recommendations = pipelineData.data.recommendations;
+        const weakTopics = pipelineData.data?.weak_topics || [];
+        const recommendations = pipelineData.data?.recommendations || [];
 
         // Render Header Insight with Weak Topics
-        document.getElementById('ui-ai-insight').innerHTML = `
-            <strong><i class="fa-solid fa-robot"></i> Your Weak Topics:</strong><br>
-            • ${weakTopics.join('<br>• ')}
-        `;
-
-        // Render Action Cards dynamically for Personalized Learning Path
+        let insightHTML = `<strong><i class="fa-solid fa-robot"></i> Your Analysis:</strong><br>`;
+        
+        if (studentAnalysis && studentAnalysis.risk_assessment.recommended_actions.length > 0) {
+            insightHTML += `<strong style="color: #14b8a6;">Recommendations:</strong><br>`;
+            insightHTML += studentAnalysis.risk_assessment.recommended_actions.slice(0, 3).map(r => `• ${r}`).join('<br>');
+        } else if (weakTopics.length > 0) {
+            insightHTML += `<strong>Weak Topics:</strong><br>• ${weakTopics.join('<br>• ')}`;
+        } else {
+            insightHTML += `You're performing well! Keep up the momentum.`;
+        }
+        
+        document.getElementById('ui-ai-insight').innerHTML = insightHTML;
         const grid = document.getElementById('ui-recommendation-grid');
         grid.innerHTML = ''; // clear loading state
 

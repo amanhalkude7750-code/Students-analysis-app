@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI | Students List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select,
+        .filter-controls input {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .filter-controls select:focus,
+        .filter-controls input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .students-table {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .student-name {
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--accent-blue);
+            transition: color 0.2s;
+        }
+
+        .student-name:hover {
+            color: var(--accent-blue-hover);
+            text-decoration: underline;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.high-risk {
+            background: rgba(244, 63, 94, 0.2);
+            color: #f4413b;
+        }
+
+        .status-badge.med-risk {
+            background: rgba(249, 115, 22, 0.2);
+            color: #ea9f1f;
+        }
+
+        .status-badge.low-risk {
+            background: rgba(34, 197, 94, 0.2);
+            color: #20c25e;
+        }
+
+        @keyframes pulse-sync {
+            0%, 100% { 
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            }
+            50% { 
+                box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+            }
+        }
+
+        .sync-indicator-small {
+            animation: pulse-sync 2s infinite;
+        }
+
+        .sync-indicator-small.inactive {
+            background: #999 !important;
+            animation: none;
+        }
+
+        .metric-small {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .metric-small strong {
+            color: var(--text-main);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-red);
+        }
+
+        .student-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .recommendations-list {
+            background: rgba(20, 184, 166, 0.1);
+            border-left: 4px solid #14b8a6;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .recommendations-list h4 {
+            margin: 0 0 0.8rem 0;
+            color: #14b8a6;
+        }
+
+        .recommendations-list li {
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .pagination {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .pagination button {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-main);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pagination button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .pagination button.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+    </style>
+</head>
+
+<body class="teacher-mode">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon teacher-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="teacher.html" class="nav-btn"><i class="fa-solid fa-chart-line"></i> Class Analytics</a>
+            <a href="students-list.html" class="nav-btn active-teacher"><i class="fa-solid fa-users"></i> Students List</a>
+            <a href="leaderboard.html?mode=teacher" class="nav-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search for a student...">
+            </div>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Vrusha</span>
+                    <span class="user-role teacher-role">Administrator</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="banner glass-card teacher-banner">
+            <div class="banner-text">
+                <h1>Students Management: <span class="gradient-text-orange">Complete Overview</span></h1>
+                <p>AI-powered analytics for each student's learning journey, risk assessment, and personalized recommendations</p>
+            </div>
+        </section>
+
+        <section class="dashboard-widgets" style="grid-column: 1 / -1; margin-bottom: 2rem;">
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-filter"></i> Filter & Sort</h2>
+                </div>
+
+                <div class="filter-controls">
+                    <select id="filterRisk">
+                        <option value="">All Risk Levels</option>
+                        <option value="HIGH">High Risk</option>
+                        <option value="MEDIUM">Medium Risk</option>
+                        <option value="LOW">Low Risk</option>
+                    </select>
+
+                    <select id="filterStandard">
+                        <option value="">All Standards</option>
+                        <option value="9th">9th</option>
+                        <option value="10th">10th</option>
+                        <option value="11th">11th</option>
+                        <option value="12th">12th</option>
+                    </select>
+
+                    <select id="filterSubject">
+                        <option value="">All Subjects</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="English">English</option>
+                        <option value="History">History</option>
+                        <option value="Computer Science">Computer Science</option>
+                    </select>
+
+                    <select id="sortBy">
+                        <option value="marks">Sort: By Marks (Desc)</option>
+                        <option value="marks-asc">Sort: By Marks (Asc)</option>
+                        <option value="attendance">Sort: By Attendance</option>
+                        <option value="engagement">Sort: By Engagement</option>
+                    </select>
+                </div>
+
+                <div class="students-table">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Class & Subject</th>
+                                <th>Marks</th>
+                                <th>Quiz Accuracy</th>
+                                <th>Attendance</th>
+                                <th>Engagement</th>
+                                <th>Risk Level</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody">
+                            <tr>
+                                <td colspan="8" class="no-data">Loading students...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="paginationContainer" class="pagination"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Student Details Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalStudentName">Student Details</h2>
+                <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-times"></i></button>
+            </div>
+
+            <div class="student-details" id="modalStudentDetails">
+                <!-- Will be populated dynamically -->
+            </div>
+
+            <div id="modalRecommendations"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let allStudents = [];
+        let filteredStudents = [];
+        const itemsPerPage = 10;
+        let currentPage = 1;
+
+        // Fetch students on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await fetchStudents();
+            setupFilters();
+        });
+
+        async function fetchStudents() {
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/students');
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    allStudents = data.data;
+                    filteredStudents = [...allStudents];
+                    renderTable();
+                }
+            } catch (err) {
+                console.error('Failed to fetch students:', err);
+                document.getElementById('studentsTableBody').innerHTML = '<tr><td colspan="8" class="no-data">Failed to load students. Ensure backend is running.</td></tr>';
+            }
+        }
+
+        function setupFilters() {
+            document.getElementById('filterRisk').addEventListener('change', applyFilters);
+            document.getElementById('filterStandard').addEventListener('change', applyFilters);
+            document.getElementById('filterSubject').addEventListener('change', applyFilters);
+            document.getElementById('sortBy').addEventListener('change', applyFilters);
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+        }
+
+        function applyFilters() {
+            const riskFilter = document.getElementById('filterRisk').value;
+            const standardFilter = document.getElementById('filterStandard').value;
+            const subjectFilter = document.getElementById('filterSubject').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const sortBy = document.getElementById('sortBy').value;
+
+            filteredStudents = allStudents.filter(student => {
+                const matchesRisk = !riskFilter || student.risk_level === riskFilter;
+                const matchesStandard = !standardFilter || student.standard === standardFilter;
+                const matchesSubject = !subjectFilter || student.subject === subjectFilter;
+                const matchesSearch = !searchTerm || 
+                    student.student_id.toString().includes(searchTerm) ||
+                    student.standard.toLowerCase().includes(searchTerm);
+
+                return matchesRisk && matchesStandard && matchesSubject && matchesSearch;
+            });
+
+            // Sort
+            if (sortBy === 'marks') {
+                filteredStudents.sort((a, b) => b.term_marks - a.term_marks);
+            } else if (sortBy === 'marks-asc') {
+                filteredStudents.sort((a, b) => a.term_marks - b.term_marks);
+            } else if (sortBy === 'attendance') {
+                filteredStudents.sort((a, b) => parseFloat(b.attendance_rate) - parseFloat(a.attendance_rate));
+            } else if (sortBy === 'engagement') {
+                filteredStudents.sort((a, b) => parseFloat(b.engagement_score) - parseFloat(a.engagement_score));
+            }
+
+            currentPage = 1;
+            renderTable();
+        }
+
+        function renderTable() {
+            const startIdx = (currentPage - 1) * itemsPerPage;
+            const endIdx = startIdx + itemsPerPage;
+            const paginatedStudents = filteredStudents.slice(startIdx, endIdx);
+
+            const tableBody = document.getElementById('studentsTableBody');
+
+            if (paginatedStudents.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="8" class="no-data">No students found</td></tr>';
+                document.getElementById('paginationContainer').innerHTML = '';
+                return;
+            }
+
+            tableBody.innerHTML = paginatedStudents.map(student => `
+                <tr>
+                    <td>
+                        <span class="student-name" onclick="viewStudentDetails(${student.student_id})">
+                            <span class="sync-indicator-small" id="sync-${student.student_id}" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 0.5rem; vertical-align: middle;"></span>
+                            Student #${student.student_id}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="metric-small">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            ${student.standard} - ${student.subject}
+                        </span>
+                    </td>
+                    <td><strong>${student.term_marks}/100</strong></td>
+                    <td>${parseFloat(student.quiz_accuracy).toFixed(2)}%</td>
+                    <td>${parseFloat(student.attendance_rate).toFixed(2)}%</td>
+                    <td>${parseFloat(student.engagement_score).toFixed(2)}%</td>
+                    <td><span class="status-badge ${student.risk_level === 'HIGH' ? 'high-risk' : student.risk_level === 'MEDIUM' ? 'med-risk' : 'low-risk'}">${student.risk_level}</span></td>
+                    <td>
+                        <button class="action-btn" onclick="viewStudentDetails(${student.student_id})" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.85rem;">
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update activity indicators for visible students
+            updateActivityIndicators(paginatedStudents);
+
+            renderPagination();
+        }
+
+        async function updateActivityIndicators(students) {
+            for (const student of students) {
+                try {
+                    const response = await fetch(`http://localhost:3000/api/v1/students/${student.student_id}/activity`);
+                    if (response.ok) {
+                        const activityData = await response.json();
+                        const indicator = document.getElementById(`sync-${student.student_id}`);
+                        
+                        if (indicator) {
+                            // Check if last activity was within last 30 minutes
+                            const lastActivityTime = new Date(activityData.last_activity_time || Date.now());
+                            const timeDiff = (new Date() - lastActivityTime) / 60000; // Convert to minutes
+                            
+                            if (timeDiff < 30) {
+                                // Active
+                                indicator.className = 'sync-indicator-small';
+                                indicator.style.background = '#22c55e';
+                                indicator.title = `Active ${Math.round(timeDiff)}m ago`;
+                            } else {
+                                // Inactive
+                                indicator.className = 'sync-indicator-small inactive';
+                                indicator.style.background = '#999';
+                                indicator.title = `Last active ${Math.round(timeDiff)}m ago`;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.log(`Activity sync for student ${student.student_id}:`, error.message);
+                }
+            }
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
+            const container = document.getElementById('paginationContainer');
+            
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            for (let i = 1; i <= totalPages; i++) {
+                html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderTable();
+            document.querySelector('.main-content').scrollTop = 0;
+        }
+
+        async function viewStudentDetails(studentId) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/v1/students/${studentId}`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const student = data.data;
+                    const modal = document.getElementById('studentModal');
+
+                    // Populate modal header
+                    document.getElementById('modalStudentName').innerHTML = 
+                        `<i class="fa-solid fa-user-graduate"></i> Student #${student.personal_info.student_id} - ${student.personal_info.standard} ${student.personal_info.subject}`;
+
+                    // Populate details
+                    const detailsHtml = `
+                        <div class="detail-card">
+                            <div class="detail-label">Term Marks</div>
+                            <div class="detail-value">${student.academic_metrics.term_marks}/100</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Quiz Accuracy</div>
+                            <div class="detail-value">${student.academic_metrics.quiz_accuracy}</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Assignment Score</div>
+                            <div class="detail-value">${student.academic_metrics.assignment_score}/100</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Attendance Rate</div>
+                            <div class="detail-value">${student.academic_metrics.attendance_rate}</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Study Time</div>
+                            <div class="detail-value">${student.engagement_metrics.study_time_hours} hrs</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Video Completion</div>
+                            <div class="detail-value">${student.engagement_metrics.video_completion}</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Session Consistency</div>
+                            <div class="detail-value">${student.engagement_metrics.session_consistency}</div>
+                        </div>
+                        <div class="detail-card">
+                            <div class="detail-label">Engagement Score</div>
+                            <div class="detail-value">${student.engagement_metrics.engagement_score}</div>
+                        </div>
+                    `;
+
+                    document.getElementById('modalStudentDetails').innerHTML = detailsHtml;
+
+                    // Populate recommendations
+                    const recsHtml = `
+                        <div class="recommendations-list">
+                            <h4><i class="fa-solid fa-lightbulb"></i> AI Recommendations</h4>
+                            <ul>
+                                ${student.risk_assessment.recommended_actions.map(rec => `<li>${rec}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                            <strong>Risk Level:</strong> <span class="status-badge ${student.risk_assessment.risk_level === 'HIGH' ? 'high-risk' : student.risk_assessment.risk_level === 'MEDIUM' ? 'med-risk' : 'low-risk'}">${student.risk_assessment.risk_level}</span>
+                        </div>
+                    `;
+
+                    document.getElementById('modalRecommendations').innerHTML = recsHtml;
+                    modal.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Failed to fetch student details:', err);
+                alert('Failed to load student details');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            const modal = document.getElementById('studentModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+
+</html>

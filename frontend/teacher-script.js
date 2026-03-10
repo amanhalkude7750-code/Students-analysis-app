@@ -1,8 +1,37 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
     // Custom Chart.js Default styling for Dark Theme
     Chart.defaults.color = '#94a3b8';
     Chart.defaults.font.family = "'Inter', sans-serif";
+
+    // ====== FETCH CLASS ANALYTICS DATA FROM NEW ENDPOINT ======
+    let classAnalytics = null;
+    try {
+        const res = await fetch('http://localhost:3000/api/v1/students/analytics/dashboard');
+        const data = await res.json();
+        if (data.success) {
+            classAnalytics = data.data;
+            
+            // Update banner with dynamic data
+            if (classAnalytics.risk_distribution) {
+                const highRisk = classAnalytics.risk_distribution.high_risk_students || 0;
+                document.querySelector('.banner-text p').innerHTML = `
+                    AI Insights: ${highRisk} students are exhibiting high risk indicators. 
+                    Current class average marks: ${classAnalytics.class_overview.avg_marks}/100
+                `;
+            }
+
+            // Update metrics with actual data
+            if (classAnalytics.class_overview) {
+                const metrics = document.querySelectorAll('.metric-card');
+                if (metrics[0]) metrics[0].querySelector('h3').textContent = classAnalytics.class_overview.avg_quiz_accuracy || '74%';
+                if (metrics[1]) metrics[1].querySelector('h3').textContent = (classAnalytics.class_overview.avg_attendance || '74') + '%';
+                if (metrics[2]) metrics[2].querySelector('h3').textContent = classAnalytics.class_overview.avg_marks + '%' || '5.2 hrs';
+            }
+        }
+    } catch (err) {
+        console.warn("Failed to fetch class analytics:", err);
+    }
 
     // Fetch and populate Teacher Mini Leaderboard
     const fetchLeaderboard = async () => {
@@ -38,6 +67,114 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     fetchLeaderboard();
+
+    // ====== UPDATE AT-RISK STUDENTS TABLE WITH REAL DATA ======
+    const updateAtRiskTable = async () => {
+        const tbody = document.querySelector('.data-table tbody');
+        if (!tbody) return;
+
+        try {
+            const res = await fetch('http://localhost:3000/api/v1/students/analytics/dashboard');
+            const data = await res.json();
+
+            if (data.success && data.data && data.data.at_risk_students) {
+                const atRiskStudents = data.data.at_risk_students.slice(0, 4);
+                
+                tbody.innerHTML = atRiskStudents.map(student => `
+                    <tr>
+                        <td>Student #${student.student_id}</td>
+                        <td>
+                            <span style="font-size:0.85rem; color:var(--text-muted);">
+                                <i class="fa-solid fa-graduation-cap"></i> ${student.standard} - ${student.subject}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">
+                                Marks: <b>${student.marks}/100</b><br />
+                                Att: <b>${student.attendance}%</b>
+                            </span>
+                        </td>
+                        <td>
+                            <span class="status-badge ${student.risk_level === 'HIGH' ? 'high-risk' : 'med-risk'}">
+                                ${student.risk_level}
+                            </span>
+                        </td>
+                        <td>${student.reason}</td>
+                        <td><button class="action-btn">Message</button></td>
+                    </tr>
+                `).join('');
+            }
+        } catch (err) {
+            console.warn("Failed to update at-risk table:", err);
+        }
+    };
+    updateAtRiskTable();
+
+    // ====== UPDATE DISTRIBUTION BARS ======
+    const updateDistributionBars = async () => {
+        if (!classAnalytics || !classAnalytics.risk_distribution) return;
+
+        const total = classAnalytics.risk_distribution.high_risk_students + 
+                      classAnalytics.risk_distribution.medium_risk_students + 
+                      classAnalytics.risk_distribution.low_risk_students;
+
+        if (total > 0) {
+            const topPct = (classAnalytics.risk_distribution.low_risk_students / total) * 100;
+            const avgPct = (classAnalytics.risk_distribution.medium_risk_students / total) * 100;
+            const riskPct = (classAnalytics.risk_distribution.high_risk_students / total) * 100;
+
+            document.querySelectorAll('.dist-bar-bg')[0].querySelector('.dist-bar').style.width = topPct + '%';
+            document.querySelectorAll('.dist-bar-bg')[1].querySelector('.dist-bar').style.width = avgPct + '%';
+            document.querySelectorAll('.dist-bar-bg')[2].querySelector('.dist-bar').style.width = riskPct + '%';
+
+            document.querySelectorAll('.distribution-row')[0].innerHTML = 
+                `<span>Top Performers</span>
+                 <div class="dist-bar-bg">
+                     <div class="dist-bar top-perf" style="width: ${topPct}%;"></div>
+                 </div>
+                 <span>${classAnalytics.risk_distribution.low_risk_students} Students</span>`;
+
+            document.querySelectorAll('.distribution-row')[1].innerHTML = 
+                `<span>Average</span>
+                 <div class="dist-bar-bg">
+                     <div class="dist-bar avg-perf" style="width: ${avgPct}%;"></div>
+                 </div>
+                 <span>${classAnalytics.risk_distribution.medium_risk_students} Students</span>`;
+
+            document.querySelectorAll('.distribution-row')[2].innerHTML = 
+                `<span>At Risk</span>
+                 <div class="dist-bar-bg">
+                     <div class="dist-bar risk-perf" style="width: ${riskPct}%;"></div>
+                 </div>
+                 <span>${classAnalytics.risk_distribution.high_risk_students} Students</span>`;
+        }
+    };
+    updateDistributionBars();
+
+    // ====== REAL-TIME ACTIVITY MONITORING ======
+    const monitorStudentActivity = async () => {
+        if (!classAnalytics || !classAnalytics.at_risk_students) return;
+
+        // Monitor each at-risk student's activity
+        for (const student of classAnalytics.at_risk_students.slice(0, 5)) {
+            try {
+                const res = await fetch(`http://localhost:3000/api/v1/students/${student.student_id}/activity`);
+                const activityData = await res.json();
+                
+                if (activityData.success && activityData.data) {
+                    const activity = activityData.data;
+                    // Activity data received - student is active
+                    console.log(`Student ${student.student_id} activity: Velocity=${activity.learning_velocity.velocity}`);
+                }
+            } catch (err) {
+                console.warn(`Failed to fetch activity for student ${student.student_id}:`, err);
+            }
+        }
+    };
+
+    // Monitor every 30 seconds
+    monitorStudentActivity();
+    setInterval(monitorStudentActivity, 30000);
 
     // -------------------------------------------------------------
     // TASK 4.3: Topic Difficulty Chart (Topic vs Avg Score)

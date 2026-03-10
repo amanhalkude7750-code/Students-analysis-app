@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI | Activity Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .activity-section {
+            margin-bottom: 2rem;
+        }
+
+        .activity-chart-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.8rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+        }
+
+        .heatmap-cell {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .heatmap-cell:hover {
+            transform: scale(1.1);
+        }
+
+        .heatmap-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .velocity-high { background: rgba(34, 197, 94, 0.2); color: #20c25e; }
+        .velocity-medium { background: rgba(249, 115, 22, 0.2); color: #ea9f1f; }
+        .velocity-low { background: rgba(244, 63, 94, 0.2); color: #f4413b; }
+
+        .consistency-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            color: var(--accent-blue);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .sync-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            margin-right: 0.5rem;
+        }
+
+        .sync-indicator.active { background: #20c25e; }
+        .sync-indicator.inactive { background: #f4413b; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .interaction-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-left: 3px solid var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .timeline-content h4 {
+            margin: 0 0 0.3rem 0;
+            font-size: 0.95rem;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn "><i class="fa-solid fa-chart-pie"></i> My Insights</a>
+            <a href="courses.html" class="nav-btn"><i class="fa-solid fa-book-open"></i> Courses</a>
+            <a href="activity.html" class="nav-btn active"><i class="fa-solid fa-pulse"></i> Activity</a>
+            <a href="leaderboard.html" class="nav-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="studentSearch" placeholder="View another student's activity...">
+            </div>
+
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name" id="userName">Loading...</span>
+                    <span class="user-role" id="userRole">Student</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="banner glass-card" style="margin-bottom: 2rem;">
+            <div class="banner-text">
+                <h1>📊 Learning Activity: <span class="gradient-text" id="bannerTitle">Real-Time Analysis</span></h1>
+                <p>
+                    <span class="sync-indicator active"></span>
+                    <strong>Synced to Teacher Dashboard</strong> - Your activity is visible to instructors in real-time
+                </p>
+            </div>
+        </section>
+
+        <!-- Weekly Activity Heatmap -->
+        <section class="dashboard-widgets activity-section">
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-fire"></i> Weekly Activity Heatmap</h2>
+                    <span style="color: var(--text-muted); font-size: 0.85rem;">Minutes studied per day (last 7 days)</span>
+                </div>
+
+                <div class="heatmap-label">
+                    <strong>Study Intensity by Day</strong>
+                </div>
+
+                <div class="heatmap-grid" id="weeklyHeatmap">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Engagement Timeline -->
+        <section class="dashboard-widgets activity-section">
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-timeline"></i> 4-Week Engagement Trend</h2>
+                </div>
+
+                <div style="position: relative; height: 300px; margin-bottom: 1.5rem;">
+                    <canvas id="engagementChart"></canvas>
+                </div>
+
+                <div id="engagementTimeline">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Interaction Metrics -->
+        <section class="dashboard-widgets activity-section">
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-mouse"></i> Interaction Breakdown</h2>
+                </div>
+
+                <div class="interaction-stats" id="interactionStats">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div style="margin-top: 2rem;">
+                    <h3 style="font-size: 1.05rem; margin-bottom: 1rem;">Learning Velocity</h3>
+                    <div id="velocityAnalysis"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teacher Dashboard Sync -->
+        <section class="dashboard-widgets activity-section">
+            <div class="widget glass-card">
+                <div class="widget-header">
+                    <h2><i class="fa-solid fa-sync"></i> Teacher Dashboard Sync</h2>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 12px;">
+                    <p style="margin-bottom: 1rem;">
+                        <i class="fa-solid fa-info-circle"></i>
+                        Your activity metrics are synchronized with your teacher's dashboard. They can see your real-time engagement patterns to provide better guidance.
+                    </p>
+                    <div id="teacherSyncInfo" style="font-size: 0.9rem; color: var(--text-muted);">
+                        <p>Last synced: <strong id="lastSyncTime">Just now</strong></p>
+                        <p>Status: <span class="status-badge low-risk" style="display: inline-block;">Live</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        Chart.defaults.color = '#94a3b8';
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        let currentStudentId = localStorage.getItem('studentId') || 1001;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadActivityData(currentStudentId);
+            setUpSync();
+        });
+
+        async function loadActivityData(studentId) {
+            try {
+                // Fetch student info
+                const studentRes = await fetch(`http://localhost:3000/api/v1/students/${studentId}`);
+                const studentData = await studentRes.json();
+
+                if (studentData.success && studentData.data) {
+                    const student = studentData.data;
+                    document.getElementById('userName').textContent = `Student ${student.personal_info.student_id}`;
+                    document.getElementById('userRole').textContent = `${student.personal_info.standard} - ${student.personal_info.subject}`;
+                    document.getElementById('bannerTitle').textContent = `${student.personal_info.standard} ${student.personal_info.subject}`;
+                }
+
+                // Fetch activity data
+                const activityRes = await fetch(`http://localhost:3000/api/v1/students/${studentId}/activity`);
+                const activityData = await activityRes.json();
+
+                if (activityData.success && activityData.data) {
+                    // Update sync indicator with last activity time
+                    updateSyncStatus(activityData.data.last_activity_time);
+                    
+                    renderWeeklyHeatmap(activityData.data.weekly_pattern);
+                    renderEngagementChart(activityData.data.engagement_timeline);
+                    renderInteractionMetrics(activityData.data.interaction_metrics);
+                    renderLearningVelocity(activityData.data.learning_velocity);
+                }
+            } catch (err) {
+                console.error('Failed to load activity data:', err);
+            }
+        }
+
+        function updateSyncStatus(lastActivityTime) {
+            const lastTime = new Date(lastActivityTime);
+            const timeDiff = (new Date() - lastTime) / 60000; // Convert to minutes
+            const indicatorSpan = document.querySelector('.sync-indicator');
+            
+            let statusText = '';
+            if (timeDiff < 30) {
+                indicatorSpan.className = 'sync-indicator active';
+                statusText = 'Active now';
+            } else if (timeDiff < 120) {
+                indicatorSpan.className = 'sync-indicator';
+                statusText = `Last active ${Math.round(timeDiff)}m ago`;
+            } else {
+                indicatorSpan.className = 'sync-indicator inactive';
+                statusText = `Last active ${Math.round(timeDiff / 60)}h ago`;
+            }
+            
+            // Update the sync status text
+            const syncText = document.querySelector('.sync-indicator').nextElementSibling;
+            if (syncText) {
+                syncText.innerHTML = `<strong>${statusText}</strong> - Your activity is visible to instructors`;
+            }
+        }
+
+        function renderWeeklyHeatmap(weeklyPattern) {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const values = [
+                weeklyPattern.monday,
+                weeklyPattern.tuesday,
+                weeklyPattern.wednesday,
+                weeklyPattern.thursday,
+                weeklyPattern.friday,
+                weeklyPattern.saturday,
+                weeklyPattern.sunday
+            ];
+
+            const maxStudy = Math.max(...values);
+            const heatmapHtml = days.map((day, idx) => {
+                const value = values[idx];
+                const intensity = value / maxStudy;
+                const colors = [
+                    'rgba(244, 63, 94, ',
+                    'rgba(249, 115, 22, ',
+                    'rgba(34, 197, 94, '
+                ];
+
+                let color;
+                if (intensity < 0.33) color = colors[0];
+                else if (intensity < 0.67) color = colors[1];
+                else color = colors[2];
+
+                return `
+                    <div class="heatmap-cell" style="background: ${color}${intensity})" title="${day}: ${value} mins">
+                        <div style="font-size: 0.75rem; margin-bottom: 0.2rem;">${day}</div>
+                        <div>${value}m</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('weeklyHeatmap').innerHTML = heatmapHtml;
+        }
+
+        function renderEngagementChart(timeline) {
+            const canvas = document.getElementById('engagementChart');
+            if (!canvas) return;
+
+            const weeks = timeline.map(t => `Week ${t.week}`);
+            const engagement = timeline.map(t => t.engagement);
+
+            new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: weeks,
+                    datasets: [{
+                        label: 'Engagement Score (%)',
+                        data: engagement,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3b82f6',
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { callback: v => v + '%' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // Render timeline items
+            const timelineHtml = timeline.map((item, idx) => `
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Week ${item.week}</h4>
+                        <p>Engagement: ${item.engagement.toFixed(0)}%</p>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('engagementTimeline').innerHTML = timelineHtml;
+        }
+
+        function renderInteractionMetrics(metrics) {
+            const statsHtml = `
+                <div class="stat-card">
+                    <div class="stat-value">${metrics.video_pauses}</div>
+                    <div class="stat-label">Video Pauses</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${metrics.video_rewinds}</div>
+                    <div class="stat-label">Video Rewinds</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${metrics.quiz_attempts}</div>
+                    <div class="stat-label">Quiz Attempts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${metrics.study_consistency}/10</div>
+                    <div class="stat-label">Consistency</div>
+                </div>
+            `;
+
+            document.getElementById('interactionStats').innerHTML = statsHtml;
+        }
+
+        function renderLearningVelocity(velocity) {
+            const velocityClass = velocity.velocity > 5 ? 'velocity-high' : velocity.velocity > 2 ? 'velocity-medium' : 'velocity-low';
+
+            const html = `
+                <div>
+                    <span class="activity-badge ${velocityClass}">Velocity: ${velocity.velocity}</span>
+                    <span class="activity-badge">${velocity.trend}</span>
+                    <span class="activity-badge">${velocity.pace}</span>
+                </div>
+                <div class="consistency-badge" style="margin-top: 1rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Learning is ${velocity.trend.toLowerCase()} - ${velocity.pace.toLowerCase()} pace
+                </div>
+            `;
+
+            document.getElementById('velocityAnalysis').innerHTML = html;
+        }
+
+        function setUpSync() {
+            // Update sync time every 30 seconds
+            setInterval(() => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString();
+                document.getElementById('lastSyncTime').textContent = timeStr;
+            }, 30000);
+        }
+
+        // Allow search to view other students
+        document.getElementById('studentSearch').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const studentId = e.target.value;
+                if (studentId) {
+                    localStorage.setItem('studentId', studentId);
+                    currentStudentId = studentId;
+                    loadActivityData(studentId);
+                    e.target.value = '';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
