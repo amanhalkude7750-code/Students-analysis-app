@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESS.AI | Teacher Dashboard</title>
+    <title>ACCESS.AI Analytics | Teacher Dashboard</title>
     <!-- Modern Typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
@@ -14,19 +14,20 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 
-<body class="teacher-mode">
+<body>
 
     <!-- Sidebar Navigation -->
     <aside class="sidebar">
         <div class="logo">
-            <div class="logo-icon teacher-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <h2>ACCESS.AI</h2>
         </div>
         <nav class="nav-links">
-            <a href="teacher.html" class="nav-btn active-teacher"><i class="fa-solid fa-chart-line"></i> Class
-                Analytics</a>
-            <a href="#" class="nav-btn"><i class="fa-solid fa-users"></i> Students List</a>
-            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            <a href="#" class="nav-btn active"><i class="fa-solid fa-chart-column"></i> Class Insights</a>
+            <a href="#" class="nav-btn"><i class="fa-solid fa-users"></i> Students</a>
+            <a href="#" class="nav-btn"><i class="fa-solid fa-list-check"></i> Assignments</a>
+            <!-- Logout points to home.html as per requirements -->
+            <a href="home.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
         </nav>
     </aside>
 
@@ -36,220 +37,126 @@
         <header class="topbar">
             <div class="search-bar">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search for a student...">
+                <input type="text" placeholder="Search students, metrics, alerts...">
             </div>
 
             <div class="user-profile">
+                <div class="notifications">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="badge">5</span>
+                </div>
+
                 <div class="user-info">
-                    <span class="user-name">Prof. Vrusha</span>
-                    <span class="user-role teacher-role">Adminstrator</span>
+                    <span class="user-name" id="ui-username">Guest Teacher</span>
+                    <span class="user-role" id="ui-userrole">Educator</span>
                 </div>
             </div>
         </header>
 
-        <!-- Welcome / Warning Banner -->
-        <section class="banner glass-card teacher-banner">
+        <!-- Welcome Banner / System Overview -->
+        <section class="banner glass-card" style="margin-bottom: 2rem;">
             <div class="banner-text">
-                <h1>Class Overview: <span class="gradient-text-orange">Data Structures</span></h1>
-                <p>AI Insights: 10 students are exhibiting high drop-off risks. Dynamic Programming remains the highest
-                    friction topic this week.</p>
+                <h1>📚 Educator Dashboard, <span class="gradient-text" id="ui-banner-name">Prof. Johnson</span></h1>
+                <p><strong><i class="fa-solid fa-chalkboard-user"></i> Class Overview</strong><br>
+                    Monitor your cohort's learning progress, identify struggling students, and analyze engagement
+                    metrics dynamically.</p>
+            </div>
+            <div class="banner-illustration">
+                <div class="glow-orb"
+                    style="background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, transparent 70%);"></div>
             </div>
         </section>
 
-        <!-- Top Metrics: Class Engagement -->
-        <section class="metrics-grid">
-            <div class="metric-card glass-card">
-                <div class="metric-icon teal-icon"><i class="fa-solid fa-video"></i></div>
-                <div class="metric-data">
-                    <h3>74%</h3>
-                    <p>Avg Watch Completion</p>
-                </div>
-            </div>
+        <!-- Top Metrics Cards -->
+        <div>
+            <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-chart-pie"></i> Student Video Activity</h2>
+            <section class="metrics-grid">
 
-            <div class="metric-card glass-card">
-                <div class="metric-icon purple-icon"><i class="fa-solid fa-pen-nib"></i></div>
-                <div class="metric-data">
-                    <h3>88%</h3>
-                    <p>Quiz Participation</p>
-                </div>
-            </div>
-
-            <div class="metric-card glass-card">
-                <div class="metric-icon blue-icon"><i class="fa-solid fa-stopwatch"></i></div>
-                <div class="metric-data">
-                    <h3>5.2 hrs</h3>
-                    <p>Avg Weekly Study Time</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="dashboard-widgets">
-
-            <!-- Performance & Difficult Topics -->
-            <div class="widget glass-card">
-                <div class="widget-header">
-                    <h2><i class="fa-solid fa-users-viewfinder"></i> Student Performance Distribution</h2>
-                </div>
-                <!-- Distribution Bars -->
-                <div class="distribution-row">
-                    <span>Top Performers</span>
-                    <div class="dist-bar-bg">
-                        <div class="dist-bar top-perf" style="width: 23%;"></div>
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon purple-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="metric-data">
+                        <h3 id="metric-total-students">0</h3>
+                        <p>Students Watching Video</p>
+                        <small>Total Unique Viewers</small>
                     </div>
-                    <span>15 Students</span>
                 </div>
-                <div class="distribution-row">
-                    <span>Average</span>
-                    <div class="dist-bar-bg">
-                        <div class="dist-bar avg-perf" style="width: 61%;"></div>
+
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon teal-icon"><i class="fa-solid fa-clock"></i></div>
+                    <div class="metric-data">
+                        <h3 id="metric-avg-watch-time">0s</h3>
+                        <p>Average Watch Time</p>
+                        <small class="trend up"><i class="fa-solid fa-arrow-trend-up"></i> Live tracking</small>
                     </div>
-                    <span>40 Students</span>
                 </div>
-                <div class="distribution-row">
-                    <span>At Risk</span>
-                    <div class="dist-bar-bg">
-                        <div class="dist-bar risk-perf" style="width: 15%;"></div>
+
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon progress-icon"><i class="fa-solid fa-check-double"></i></div>
+                    <div class="metric-data">
+                        <h3 id="metric-completion-rate">0%</h3>
+                        <p>Video Completion Rate</p>
+                        <small class="trend up"><i class="fa-solid fa-arrow-trend-up"></i> Course Progress</small>
                     </div>
-                    <span>10 Students</span>
                 </div>
 
-                <div class="widget-header" style="margin-top: 2rem;">
-                    <h2><i class="fa-solid fa-triangle-exclamation"></i> Most Difficult Topics</h2>
+                <div class="metric-card glass-card top-metric">
+                    <div class="metric-icon error-icon"
+                        style="color: var(--accent-red); background: rgba(244, 63, 94, 0.1);"><i
+                            class="fa-solid fa-fire"></i></div>
+                    <div class="metric-data" style="width: 100%;">
+                        <h3 id="metric-most-replayed">N/A</h3>
+                        <p>Most Replayed Video</p>
+                        <small>Peak Engagement</small>
+                    </div>
                 </div>
-                <div class="tags-container">
-                    <span class="bad-tag">1. Dynamic Programming <i class="fa-solid fa-arrow-trend-down"></i></span>
-                    <span class="bad-tag">2. Graph Traversal <i class="fa-solid fa-arrow-trend-down"></i></span>
-                    <span class="bad-tag">3. Recursion <i class="fa-solid fa-arrow-trend-down"></i></span>
-                </div>
-            </div>
 
-            <!-- At Risk Students Table -->
-            <div class="widget glass-card">
+            </section>
+        </div>
+
+        <!-- Dashboard Charts defined in teacher-script.js -->
+        <section class="dashboard-widgets" style="margin-top: 2rem;">
+
+            <!-- Topic Difficulty -->
+            <div class="widget glass-card widget-left">
                 <div class="widget-header">
-                    <h2><i class="fa-solid fa-user-shield"></i> At-Risk Students Intervention</h2>
-                    <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem;">Export List</button>
+                    <h2><i class="fa-solid fa-ranking-star"></i> Topic Difficulty Analysis</h2>
                 </div>
-
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Class details</th>
-                            <th>Marks & Attend.</th>
-                            <th>Risk Level</th>
-                            <th>AI Reason</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Rahul K.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 10th - Mathematics</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>42/100</b><br />Att: <b>125/220</b></span></td>
-                            <td><span class="status-badge high-risk">High</span></td>
-                            <td>Low activity, 12 days inactive</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Sneha P.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 9th - Science</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>35/100</b><br />Att: <b>180/220</b></span></td>
-                            <td><span class="status-badge med-risk">Medium</span></td>
-                            <td>Low quiz scores (Avg 35%)</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Aman D.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 11th - Computer Sci</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>85/100</b><br />Att: <b>205/220</b></span></td>
-                            <td><span class="status-badge high-risk">High</span></td>
-                            <td>High video drop-off (65%) + Disciplinary</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Priya S.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 12th - Physics</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>60/100</b><br />Att: <b>190/220</b></span></td>
-                            <td><span class="status-badge med-risk">Medium</span></td>
-                            <td>Struggling with subject matter</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </section>
-
-        <!-- Advanced Visualizations (Tasks 4.3 - 4.5) -->
-        <section class="dashboard-widgets"
-            style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-top: 1.5rem;">
-
-            <!-- Task 4.3 Topic Difficulty Chart -->
-            <div class="widget glass-card">
-                <div class="widget-header">
-                    <h2><i class="fa-solid fa-chart-bar"></i> Topic Difficulty</h2>
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Topic vs Avg Score</span>
-                </div>
-                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
                     <canvas id="topicDifficultyChart"></canvas>
                 </div>
             </div>
 
-            <!-- Task 4.4 Quiz Performance Trends -->
-            <div class="widget glass-card">
-                <div class="widget-header">
-                    <h2><i class="fa-solid fa-arrow-trend-up"></i> Quiz Trends</h2>
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Quiz vs Score</span>
-                </div>
-                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
-                    <canvas id="quizTrendsChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Task 4.5 Video Interaction Heatmap -->
-            <div class="widget glass-card">
+            <!-- Video Heatmap -->
+            <div class="widget glass-card widget-right">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-fire"></i> Video Interaction Heatmap</h2>
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Timestamp vs Replay Count</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Lecture 4 Hotspots</span>
                 </div>
-                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                <div class="chart-container" style="position: relative; height: 300px; width: 100%;">
                     <canvas id="videoHeatmapChart"></canvas>
                 </div>
             </div>
 
         </section>
 
-        <!-- Explainable AI Section -->
+        <!-- Quiz Trends -->
         <section class="dashboard-widgets" style="margin-top: 1.5rem;">
-            <div class="widget glass-card" style="grid-column: 1 / -1;">
+            <div class="widget glass-card" style="width: 100%;">
                 <div class="widget-header">
-                    <h2><i class="fa-solid fa-brain"></i> Explainable AI: Feature Importance</h2>
-                    <span style="color: var(--text-muted); font-size: 0.9rem;">Powered by XGBoostClassifier</span>
+                    <h2><i class="fa-solid fa-chart-line"></i> Class Quiz Trends</h2>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Progression over the semester</span>
                 </div>
-                <div
-                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem;">
-                    <p style="margin-bottom: 1.5rem; text-align: center; color: var(--text-main); font-size: 1.05rem;">
-                        <strong>"Our AI autonomously determined that Quiz Accuracy, Video Completion, and the calculated
-                            Engagement Score are the strongest predictors of whether a student will succeed or
-                            fail."</strong>
-                    </p>
-                    <img src="./feature_importance.png" alt="Feature Importance Chart"
-                        style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--border-light); box-shadow: 0 4px 6px rgba(0,0,0,0.05);" />
+                <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                    <canvas id="quizTrendsChart"></canvas>
                 </div>
             </div>
         </section>
 
     </main>
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="./firebase-config.js"></script>
     <script src="./teacher-script.js"></script>
 </body>
 

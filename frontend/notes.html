@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI Analytics | My Notes</title>
+    <!-- Modern Typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .note-card {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            border-top: 4px solid var(--accent-purple);
+        }
+
+        .note-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-chart-pie"></i> My Insights</a>
+            <a href="courses.html" class="nav-btn"><i class="fa-solid fa-book-open"></i> Courses</a>
+            <a href="notes.html" class="nav-btn active"><i class="fa-solid fa-clipboard"></i> Notes</a>
+            <a href="leaderboard.html" class="nav-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main-content">
+        <header class="topbar">
+            <h1><i class="fa-solid fa-clipboard" style="color: var(--accent-purple)"></i> Saved Notes & AI Summaries
+            </h1>
+        </header>
+
+        <!-- Add General Note Section has been removed by request -->
+
+        <section id="notes-container" class="notes-grid">
+            <div style="color: var(--text-muted); padding: 1rem;">Loading your notes...</div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const notesContainer = document.getElementById('notes-container');
+
+            // Fetch and render notes
+            const loadNotes = async () => {
+                notesContainer.innerHTML = '<div style="color: var(--text-muted); padding: 1rem;">Loading your notes...</div>';
+                try {
+                    const res = await fetch('http://localhost:3000/api/v1/notes/101');
+                    const data = await res.json();
+
+                    if (data.success && data.data && data.data.length > 0) {
+                        notesContainer.innerHTML = '';
+
+                        const sortedNotes = data.data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                        sortedNotes.forEach(note => {
+                            const dateObj = new Date(note.timestamp);
+                            const displayDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString();
+
+                            const courseLabel = note.course_id === 'General' ? 'General Note' : `Course ${note.course_id} Notes`;
+
+                            notesContainer.innerHTML += `
+                                <div class="glass-card note-card">
+                                    <div>
+                                        <h3 style="font-size: 1.1rem">${courseLabel}</h3>
+                                        <span class="note-date"><i class="fa-regular fa-clock"></i> ${displayDate}</span>
+                                    </div>
+                                    <p style="font-size: 0.95rem; line-height: 1.5;">${note.notes}</p>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        notesContainer.innerHTML = '<div style="color: var(--text-muted); padding: 1rem;">No notes saved yet. Watch a video and take some notes!</div>';
+                    }
+                } catch (err) {
+                    notesContainer.innerHTML = '<div style="color: var(--accent-red); padding: 1rem;">Failed to fetch notes from the server.</div>';
+                }
+            };
+
+            // Initial Load
+            loadNotes();
+        });
+    </script>
+</body>
+
+</html>

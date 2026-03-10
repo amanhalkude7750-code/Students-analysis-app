@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACCESS.AI | Video Learning Module</title>
+    <!-- Modern Typography -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .player-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 1rem;
+            height: calc(100vh - 180px);
+            /* Adjust to fit screen */
+        }
+
+        .video-section {
+            display: flex;
+            flex-direction: column;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-light);
+        }
+
+        .iframe-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            /* 16:9 ratio */
+            height: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .video-details {
+            padding: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .sidebar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .telemetry-log {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid var(--border-light);
+        }
+
+        .telemetry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--border-light);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .tab.active {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--accent-purple);
+        }
+
+        .notes-area {
+            flex-grow: 1;
+            background: transparent;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 1rem;
+            resize: none;
+            font-family: var(--font-body);
+        }
+
+        .notes-area:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .tools-panel {
+            display: flex;
+            flex-direction: column;
+            height: 50%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>ACCESS.AI</h2>
+        </div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-btn"><i class="fa-solid fa-chart-pie"></i> My Insights</a>
+            <a href="courses.html" class="nav-btn active"><i class="fa-solid fa-book-open"></i> Courses</a>
+            <a href="home.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="topbar">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search resources...">
+            </div>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Alex Researcher</span>
+                    <span class="user-role">Student PRO</span>
+                </div>
+            </div>
+        </header>
+
+        <div style="margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+            <a href="courses.html" style="color: var(--accent-blue); text-decoration: none;"><i
+                    class="fa-solid fa-arrow-left"></i> Back to Courses</a>
+        </div>
+
+        <h1 id="course-title">Loading Module...</h1>
+
+        <div class="player-container">
+            <!-- Left: Video Player -->
+            <div class="video-section">
+                <!-- YouTube IFRAME -->
+                <div class="iframe-container" id="player">
+                    <!-- YouTube API will inject iframe here -->
+                </div>
+
+                <div class="video-details">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <h2 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Lecture 1: Core Concepts</h2>
+                            <p style="color: var(--text-muted);">This video explains the fundamental principles you need
+                                for the upcoming quiz. Your engagement is being tracked for AI analysis.</p>
+                        </div>
+                        <button class="btn-primary" style="padding: 0.5rem 1rem;">Take Quiz <i
+                                class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Interactive Tools & Telemetry Log -->
+            <div class="sidebar-section">
+
+                <!-- Notes / Transcript -->
+                <div class="glass-card tools-panel" style="padding: 1.5rem;">
+                    <div class="tabs">
+                        <div class="tab active">My Notes</div>
+                        <div class="tab">Transcript</div>
+                        <div class="tab">AI Summary</div>
+                    </div>
+                    <textarea class="notes-area"
+                        placeholder="Take your notes here while watching. They will be saved to your profile..."></textarea>
+                    <button class="btn-primary"
+                        style="margin-top: 1rem; width: 100%; background: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-main);">Save
+                        Notes</button>
+                </div>
+
+                <!-- Live Telemetry Simulator for Demo Purposes -->
+                <div class="telemetry-log" id="telemetry-console">
+                    <div class="telemetry-header">
+                        <span><i class="fa-solid fa-satellite-dish"></i> Live Telemetry Sync</span>
+                        <span style="color: #06d6a0;">● Connected</span>
+                    </div>
+                    <div>[SYS] Initializing ACCESS.AI Tracker...</div>
+                    <div id="log-output"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- YouTube Iframe API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script type="module" src="./firebase-config.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const courseName = params.get('course') || 'Interactive Learning Module';
+
+        // Set dynamic identity from localStorage
+        const storedUser = localStorage.getItem('activeUser');
+        const user = storedUser ? JSON.parse(storedUser) : { name: "Guest", id: "guest_001" };
+        const studentId = user.id;
+
+        document.getElementById('course-title').textContent = courseName;
+
+        // Update UI with student name
+        const uiName = document.querySelector('.user-name');
+        if (uiName) uiName.textContent = user.name;
+
+        let player;
+        let lastTime = -1;
+        let isSeeking = false;
+
+        const logOutput = document.getElementById('log-output');
+
+        function appendLog(message, color = "var(--accent-green)") {
+            const timeStr = new Date().toLocaleTimeString([], { hour12: false });
+            const p = document.createElement('div');
+            p.innerHTML = `<span style="color:var(--text-muted)">[${timeStr}]</span> <span style="color:${color}">${message}</span>`;
+            logOutput.appendChild(p);
+            // Auto scroll to bottom
+            const consoleBox = document.getElementById('telemetry-console');
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        // Default Video IDs based on topic 
+        let videoId = '8hly31xKli0'; // Algorithms default
+        if (courseName.toLowerCase().includes('graph')) videoId = 'tWVWeAqZ0WU'; // Graph Theory
+        if (courseName.toLowerCase().includes('dynamic')) videoId = 'oBt53YbR9Kk'; // DP
+
+        // This function creates an <iframe> (and YouTube player) after the API code downloads.
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: videoId,
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 1,
+                    'modestbranding': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            appendLog('Video Stream Ready. Tracking engagement...', '#fff');
+
+            // Send initial load event if needed, but we will rely on PLAY event.
+
+            // Monitor for Seeking (Rewinding/Fast Forwarding)
+            setInterval(() => {
+                if (player && player.getCurrentTime) {
+                    let currentTime = player.getCurrentTime();
+
+                    if (lastTime !== -1) {
+                        // If time difference is greater than 1.5 seconds, user jumped/seeked manually
+                        if (Math.abs(currentTime - lastTime) > 1.5 && player.getPlayerState() !== YT.PlayerState.PAUSED) {
+                            if (currentTime < lastTime) {
+                                appendLog(`EVENT: Rewind detected. User went back to ${formatTime(currentTime)}`, 'var(--accent-red)');
+                                // API hit to backend would go here
+                            } else {
+                                appendLog(`EVENT: Skip detected. Fast forwarded to ${formatTime(currentTime)}`, 'orange');
+                            }
+                        }
+                    }
+                    lastTime = currentTime;
+                }
+            }, 1000);
+        }
+
+        let pauseTracker;
+
+        // Sync Engagement & Progress to Firebase
+        async function syncEngagement(eventType) {
+            if (!window.db) return;
+
+            const time = player.getCurrentTime ? player.getCurrentTime() : 0;
+            const duration = player.getDuration ? player.getDuration() : 1;
+            const progressPercent = Math.min(100, Math.floor((time / duration) * 100));
+
+            // 1. Log the raw event for the Teacher Dashboard
+            const eventPayload = {
+                student_id: studentId,
+                student_name: user.name,
+                course_id: courseName,
+                video_id: videoId,
+                event_type: eventType,
+                watch_duration: Math.floor(time),
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Log to video_events
+                await window.addDoc(window.collection(window.db, "video_events"), eventPayload);
+                console.log(`[Firebase] Synced ${eventType} event`);
+
+                // 2. Update Student's Course Progress automatically
+                const coursesRef = window.collection(window.db, "courses");
+                const q = window.query(coursesRef, window.where("title", "==", courseName));
+                const snap = await window.getDocs(q);
+
+                if (!snap.empty) {
+                    const courseDoc = snap.docs[0];
+                    const currentData = courseDoc.data();
+
+                    // Only update if progress is higher than current
+                    if (progressPercent > currentData.progress) {
+                        const { doc, updateDoc } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
+                        await updateDoc(doc(window.db, "courses", courseDoc.id), {
+                            progress: progressPercent,
+                            completedModules: progressPercent === 100 ? currentData.totalModules : Math.floor((progressPercent / 100) * currentData.totalModules)
+                        });
+                        console.log(`[Firebase] Updated course progress to ${progressPercent}%`);
+                    }
+                }
+            } catch (err) {
+                console.error('Firebase Sync Error:', err);
+            }
+        }
+
+        // Simulate HTML5 listeners to fulfill requirement format strictly
+        // const videoPlayer = { addEventListener: (event, callback) => {} };
+        // videoPlayer.addEventListener("play", sendVideoEvent);
+        // videoPlayer.addEventListener("pause", sendVideoEvent);
+        // videoPlayer.addEventListener("ended", sendVideoEvent);
+
+        function onPlayerStateChange(event) {
+            const time = player.getCurrentTime ? formatTime(player.getCurrentTime()) : "0:00";
+
+            if (event.data == YT.PlayerState.PLAYING) {
+                appendLog(`STATUS: Playing @ ${time}`, 'var(--accent-green)');
+                syncEngagement('play');
+                if (pauseTracker) clearInterval(pauseTracker);
+            }
+            else if (event.data == YT.PlayerState.PAUSED) {
+                appendLog(`STATUS: Paused @ ${time}`, 'yellow');
+                syncEngagement('pause');
+
+                // Track pause duration
+                let pauseTime = 0;
+                pauseTracker = setInterval(() => {
+                    pauseTime++;
+                    if (pauseTime % 5 === 0) { // Log every 5 seconds of pause
+                        appendLog(`WARN: Student idle for ${pauseTime}s`, 'orange');
+                    }
+                }, 1000);
+            }
+            else if (event.data == YT.PlayerState.ENDED) {
+                appendLog(`STATUS: Video Completed. Syncing metrics to Database...`, 'var(--accent-purple)');
+                syncEngagement('video_completed');
+                if (pauseTracker) clearInterval(pauseTracker);
+                setTimeout(() => {
+                    appendLog(`SUCCESS: Session stored. Generating Next Step Recommendations...`, '#fff');
+                }, 1500);
+            }
+        }
+
+        function formatTime(seconds) {
+            if (!seconds) return "0:00";
+            const m = Math.floor(seconds / 60);
+            const s = Math.floor(seconds % 60);
+            return `${m}:${s < 10 ? '0' + s : s}`;
+        }
+    </script>
+</body>
+
+</html>
