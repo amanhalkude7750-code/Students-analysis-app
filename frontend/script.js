@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Determine Identity
+    const storedUser = localStorage.getItem('activeUser');
+    if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const nameEl = document.getElementById('ui-username');
+        const roleEl = document.getElementById('ui-userrole');
+        const aiBannerEl = document.querySelector('.banner-text h1 .gradient-text');
+
+        if (nameEl) nameEl.textContent = user.name;
+        if (roleEl) roleEl.textContent = user.role.toUpperCase();
+        if (aiBannerEl) aiBannerEl.textContent = user.name.split(' ')[0];
+    }
+
     try {
         const dashboardRef = fetch('http://localhost:3000/api/v1/dashboard');
         const coursesRef = fetch('http://localhost:3000/api/v1/courses');

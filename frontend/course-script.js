@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // Determine Identity
+    const storedUser = localStorage.getItem('activeUser');
+    if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const nameEl = document.getElementById('ui-username');
+        const roleEl = document.getElementById('ui-userrole');
+
+        if (nameEl) nameEl.textContent = user.name;
+        if (roleEl) roleEl.textContent = user.role.toUpperCase();
+    }
 
     const coursesGrid = document.getElementById('all-courses-grid');
 

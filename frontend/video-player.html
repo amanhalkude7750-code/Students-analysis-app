@@ -226,6 +226,7 @@
         // Set dynamic title
         const params = new URLSearchParams(window.location.search);
         const courseName = params.get('course') || 'Interactive Learning Module';
+        const studentId = params.get('student') || 'student_live_001';
         document.getElementById('course-title').textContent = courseName;
 
         let player;
@@ -300,7 +301,8 @@
         function sendVideoEvent(eventType) {
             const time = player.getCurrentTime ? player.getCurrentTime() : 0;
             const eventPayload = {
-                student_id: "student_" + Math.floor(Math.random() * 1000), // Random ID for demo, normally from session
+                student_id: studentId,
+
                 course_id: courseName,
                 video_id: videoId,
                 teacher_id: "Prof. Johnson",
@@ -309,7 +311,7 @@
                 timestamp: new Date().toISOString()
             };
 
-            fetch('http://localhost:3000/api/v1/video-events', {
+            fetch('https://chakravuyu-api.onrender.com/api/v1/video-events', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(eventPayload)

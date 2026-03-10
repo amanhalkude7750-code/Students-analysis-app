@@ -144,6 +144,29 @@ app.get('/api/v1/teacher-video-analytics', (req, res) => {
     }
 });
 
+// -----------------------------------------------------
+// TASK - Authentication API
+// -----------------------------------------------------
+
+const mockUsers = [
+    { id: "student_001", email: "student@university.edu", password: "password123", role: "student", name: "Alex Researcher" },
+    { id: "prof_001", email: "teacher@university.edu", password: "admin", role: "teacher", name: "Prof. Johnson" }
+];
+
+app.post('/api/v1/login', (req, res) => {
+    const { email, password, role } = req.body;
+
+    const user = mockUsers.find(u => u.email === email && u.password === password && u.role === role);
+
+    if (user) {
+        // Exclude the password from the response
+        const { password, ...safeUser } = user;
+        res.json({ success: true, user: safeUser });
+    } else {
+        res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
+});
+
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Backend API Server running at http://localhost:${PORT}`);
 });

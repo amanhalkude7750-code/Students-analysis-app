@@ -218,8 +218,9 @@
             </div>
             <div class="options"><label><input type="checkbox">Remember me</label><a href="#">Forgot password?</a></div>
 
-            <button type="button" onclick="window.location.href='index.html'" class="btn-primary login-btn">Sign in to
-                Student Dashboard</button>
+            <button type="button" id="login-button" class="btn-primary login-btn">Sign in to Student Dashboard</button>
+            <p id="error-message"
+                style="color: var(--accent-red); margin-top: -10px; margin-bottom: 10px; display: none;"></p>
         </div>
         <div class="divider">OR CONTINUE WITH</div>
         <div class="social-login"><button class="btn-social"><i class="fa-brands fa-google"></i></button><button
@@ -229,6 +230,35 @@
             <p>Are you an educator? <a href="teacher-login.html">Go to Teacher Login</a></p>
         </div>
     </div>
+
+    <script>
+        document.getElementById('login-button').addEventListener('click', async () => {
+            const email = document.querySelector('input[type="email"]').value;
+            const password = document.querySelector('input[type="password"]').value;
+            const errorMsg = document.getElementById('error-message');
+
+            try {
+                const response = await fetch('http://localhost:3000/api/v1/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, role: 'student' })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('activeUser', JSON.stringify(data.user));
+                    window.location.href = 'index.html';
+                } else {
+                    errorMsg.textContent = data.message;
+                    errorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                errorMsg.textContent = "Cannot connect to server.";
+                errorMsg.style.display = 'block';
+            }
+        });
+    </script>
 </body>
 
 </html>

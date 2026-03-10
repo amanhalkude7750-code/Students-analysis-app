@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Determine Identity
+    const storedUser = localStorage.getItem('activeUser');
+    if (storedUser) {
+        const user = JSON.parse(storedUser);
+        const nameEl = document.getElementById('ui-username');
+        const roleEl = document.getElementById('ui-userrole');
+        const aiBannerEl = document.getElementById('ui-banner-name');
+
+        if (nameEl) nameEl.textContent = user.name;
+        if (roleEl) roleEl.textContent = user.role.toUpperCase();
+        if (aiBannerEl) aiBannerEl.textContent = user.name;
+    }
+
 
     // Custom Chart.js Default styling for Dark Theme
     Chart.defaults.color = '#94a3b8';
