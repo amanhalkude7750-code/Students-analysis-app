@@ -219,6 +219,9 @@
             <div class="options"><label><input type="checkbox">Remember me</label><a href="#">Forgot password?</a></div>
 
             <button type="button" id="login-button" class="btn-primary login-btn">Sign in to Student Dashboard</button>
+            <button type="button" id="teacher-view-button" class="btn-primary login-btn"
+                style="background: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-main); margin-top: -10px;">Sign
+                in to Educator Dashboard</button>
             <p id="error-message"
                 style="color: var(--accent-red); margin-top: -10px; margin-bottom: 10px; display: none;"></p>
         </div>
@@ -236,32 +239,31 @@
         // Seed database if it's the very first time
         setTimeout(() => { if (window.seedUsersIfEmpty) window.seedUsersIfEmpty(); }, 1500);
 
-        document.getElementById('login-button').addEventListener('click', async () => {
+        const loginHandler = async (redirectUrl, role) => {
             const email = document.querySelector('input[type="email"]').value;
             const password = document.querySelector('input[type="password"]').value;
             const errorMsg = document.getElementById('error-message');
 
             try {
-                // Ensure Firebase variables have mounted
                 if (!window.db) {
                     errorMsg.textContent = "Connecting to database... try again in a second.";
                     errorMsg.style.display = 'block';
                     return;
                 }
 
-                // Query Firebase directly instead of using Node.js API
+                // Query Firebase directly
                 const usersRef = window.collection(window.db, "users");
-                const q = window.query(usersRef, window.where("email", "==", email), window.where("password", "==", password), window.where("role", "==", "student"));
+                const q = window.query(usersRef, window.where("email", "==", email), window.where("password", "==", password), window.where("role", "==", role));
                 const querySnapshot = await window.getDocs(q);
 
                 if (!querySnapshot.empty) {
                     let userDoc = querySnapshot.docs[0].data();
-                    const { password, ...safeUser } = userDoc;
+                    const { password: pw, ...safeUser } = userDoc;
 
                     localStorage.setItem('activeUser', JSON.stringify(safeUser));
-                    window.location.href = 'index.html';
+                    window.location.href = redirectUrl;
                 } else {
-                    errorMsg.textContent = "Invalid email or password";
+                    errorMsg.textContent = `Invalid ${role} email or password`;
                     errorMsg.style.display = 'block';
                 }
             } catch (err) {
@@ -269,7 +271,10 @@
                 errorMsg.textContent = "Cannot connect to database.";
                 errorMsg.style.display = 'block';
             }
-        });
+        };
+
+        document.getElementById('login-button').addEventListener('click', () => loginHandler('index.html', 'student'));
+        document.getElementById('teacher-view-button').addEventListener('click', () => loginHandler('teacher.html', 'teacher'));
     </script>
 </body>
 
