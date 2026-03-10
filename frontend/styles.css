@@ -35,7 +35,6 @@ body {
     color: var(--text-main);
     font-family: var(--font-body);
     display: flex;
-    flex-direction: column;
     min-height: 100vh;
     overflow-x: hidden;
     filter: grayscale(100%);
@@ -93,13 +92,12 @@ h4 {
 
 /* --- Sidebar Navigation --- */
 .sidebar {
-    width: 100%;
+    width: 260px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 1rem 3rem;
-    border-bottom: 1px solid var(--border-light);
-    height: auto;
+    flex-direction: column;
+    padding: 2rem 1.5rem;
+    border-right: 1px solid var(--border-light);
+    height: 100vh;
     position: sticky;
     top: 0;
     background: rgba(255, 255, 255, 0.8);
@@ -111,8 +109,7 @@ h4 {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 0;
-    margin-right: 3rem;
+    margin-bottom: 3rem;
 }
 
 .logo-icon {
@@ -140,10 +137,8 @@ h4 {
 
 .nav-links {
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     flex: 1;
 }
 
@@ -682,4 +677,132 @@ h4 {
 .duration {
     color: var(--text-muted);
     font-size: 0.85rem;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1024px) {
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-widgets {
+        grid-template-columns: 1fr;
+    }
+
+    .courses-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .banner-text {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    /* Sidebar becomes a top nav */
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        flex-direction: column;
+        padding: 1rem;
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .logo {
+        margin-bottom: 1rem;
+        justify-content: center;
+    }
+
+    .nav-links {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .nav-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        width: 100%;
+    }
+
+    .user-profile {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .metrics-grid,
+    .courses-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .banner {
+        flex-direction: column;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .banner-text h1 {
+        font-size: 1.8rem;
+    }
+
+    .widget {
+        overflow-x: auto;
+    }
+
+    .activity-bars {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-links {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .nav-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .login-container {
+        padding: 1.5rem !important;
+    }
+
+    .metric-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .metric-icon {
+        margin-bottom: 0.5rem;
+    }
+
+    .banner-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .course-content {
+        padding: 1rem;
+    }
 }

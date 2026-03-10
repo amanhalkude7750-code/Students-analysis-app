@@ -179,22 +179,6 @@
             background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
             z-index: 1;
         }
-
-        .switch-portal {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .switch-portal a {
-            color: var(--accent-purple);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .switch-portal a:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 
@@ -206,7 +190,7 @@
             <h2>ACCESS.AI</h2>
         </div>
         <h1 class="login-title">Student Portal</h1>
-        <p class="login-subtitle">Sign in to access your telemetry and learning insights.</p>
+        <p class="login-subtitle">Sign in to access your localized telemetry and learning path.</p>
         <div style="width: 100%;">
             <div class="input-group"><label>Email Address</label>
                 <div class="input-wrapper"><i class="fa-regular fa-envelope"></i><input type="email"
@@ -218,64 +202,17 @@
             </div>
             <div class="options"><label><input type="checkbox">Remember me</label><a href="#">Forgot password?</a></div>
 
-            <button type="button" id="login-button" class="btn-primary login-btn">Sign in to Student Dashboard</button>
-            <button type="button" id="teacher-view-button" class="btn-primary login-btn"
-                style="background: var(--bg-dark); border: 1px solid var(--border-light); color: var(--text-main); margin-top: -10px;">Sign
-                in to Educator Dashboard</button>
-            <p id="error-message"
-                style="color: var(--accent-red); margin-top: -10px; margin-bottom: 10px; display: none;"></p>
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <button type="button" onclick="window.location.href='index.html'" class="btn-primary login-btn"
+                    style="margin-bottom: 0; width: 100%;"><i class="fa-solid fa-user-graduate"></i> Login as
+                    Student</button>
+            </div>
         </div>
         <div class="divider">OR CONTINUE WITH</div>
         <div class="social-login"><button class="btn-social"><i class="fa-brands fa-google"></i></button><button
                 class="btn-social"><i class="fa-brands fa-github"></i></button><button class="btn-social"><i
                     class="fa-brands fa-microsoft"></i></button></div>
-        <div class="switch-portal">
-            <p>Are you an educator? <a href="teacher-login.html">Go to Teacher Login</a></p>
-        </div>
     </div>
-
-    <script type="module" src="./firebase-config.js"></script>
-    <script>
-        // Seed database if it's the very first time
-        setTimeout(() => { if (window.seedUsersIfEmpty) window.seedUsersIfEmpty(); }, 1500);
-
-        const loginHandler = async (redirectUrl, role) => {
-            const email = document.querySelector('input[type="email"]').value;
-            const password = document.querySelector('input[type="password"]').value;
-            const errorMsg = document.getElementById('error-message');
-
-            try {
-                if (!window.db) {
-                    errorMsg.textContent = "Connecting to database... try again in a second.";
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
-                // Query Firebase directly
-                const usersRef = window.collection(window.db, "users");
-                const q = window.query(usersRef, window.where("email", "==", email), window.where("password", "==", password), window.where("role", "==", role));
-                const querySnapshot = await window.getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    let userDoc = querySnapshot.docs[0].data();
-                    const { password: pw, ...safeUser } = userDoc;
-
-                    localStorage.setItem('activeUser', JSON.stringify(safeUser));
-                    window.location.href = redirectUrl;
-                } else {
-                    errorMsg.textContent = `Invalid ${role} email or password`;
-                    errorMsg.style.display = 'block';
-                }
-            } catch (err) {
-                console.error(err);
-                errorMsg.textContent = "Cannot connect to database.";
-                errorMsg.style.display = 'block';
-            }
-        };
-
-        document.getElementById('login-button').addEventListener('click', () => loginHandler('index.html', 'student'));
-        document.getElementById('teacher-view-button').addEventListener('click', () => loginHandler('teacher.html', 'teacher'));
-    </script>
 </body>
 
 </html>

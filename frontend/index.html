@@ -25,7 +25,9 @@
         <nav class="nav-links">
             <a href="index.html" class="nav-btn active"><i class="fa-solid fa-chart-pie"></i> My Insights</a>
             <a href="courses.html" class="nav-btn"><i class="fa-solid fa-book-open"></i> Courses</a>
-            <a href="home.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            <a href="notes.html" class="nav-btn"><i class="fa-solid fa-clipboard"></i> Notes</a>
+            <a href="leaderboard.html" class="nav-btn"><i class="fa-solid fa-trophy"></i> Leaderboard</a>
+            <a href="login.html" class="nav-btn"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
         </nav>
 
 
@@ -47,12 +49,13 @@
                 </div>
 
                 <div class="user-info">
-                    <span class="user-name" id="ui-username">Guest Student</span>
-                    <span class="user-role" id="ui-userrole">Student</span>
+                    <span class="user-name">Alex Researcher</span>
+                    <span class="user-role">Student PRO</span>
                 </div>
             </div>
         </header>
 
+        <!-- Welcome Banner / AI Insights -->
         <section class="banner glass-card" style="margin-bottom: 2rem;">
             <div class="banner-text">
                 <h1>🧠 AI Insights, <span class="gradient-text">Alex</span></h1>
@@ -65,11 +68,12 @@
             </div>
         </section>
 
-
+        <!-- Top Metrics Cards: Learning Progress & Study Time -->
         <div>
             <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-arrow-up-right-dots"></i> 📈 Learning Progress</h2>
             <section class="metrics-grid">
 
+                <!-- Performance Prediction Widget (New Data) -->
                 <div class="metric-card glass-card top-metric">
                     <div class="metric-icon purple-icon"><i class="fa-solid fa-chart-pie"></i></div>
                     <div class="metric-data">
@@ -112,14 +116,15 @@
             </section>
         </div>
 
-
+        <!-- Data Visualization Section -->
         <section class="dashboard-widgets">
 
+            <!-- Specific Concept Mastery Scores -->
             <div class="widget glass-card widget-left">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-spider"></i> Concept Mastery Table</h2>
                 </div>
-
+                <!-- Radar Chart from previous iteration replaced/augmented by explicit score list as requested -->
                 <div class="mastery-list">
                     <div class="mastery-row">
                         <span>Arrays</span>
@@ -152,7 +157,7 @@
                 </div>
             </div>
 
-
+            <!-- Heatmap / Activity Graph Container for "Weekly Learning Trend" -->
             <div class="widget glass-card activity-widget widget-right">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-chart-column"></i> Weekly Learning Trend</h2>
@@ -161,7 +166,7 @@
                         <option>This Month</option>
                     </select>
                 </div>
-
+                <!-- Simulated UI for Activity -->
                 <div class="activity-bars">
                     <div class="bar-col">
                         <div class="bar-fill" style="height: 40%;" data-tooltip="Mon: 2hrs"></div>
@@ -195,7 +200,7 @@
             </div>
         </section>
 
-
+        <!-- Task 4 Visualizations -->
         <section class="dashboard-widgets" style="margin-top: 1.5rem;">
             <!-- Learning Progress Graph -->
             <div class="widget glass-card">
@@ -208,7 +213,7 @@
                 </div>
             </div>
 
-
+            <!-- Engagement Heatmap -->
             <div class="widget glass-card">
                 <div class="widget-header">
                     <h2><i class="fa-solid fa-fire-flame-curved"></i> Engagement Heatmap</h2>
@@ -220,7 +225,7 @@
             </div>
         </section>
 
-
+        <!-- Up Next Recommended Courses Section based on AI -->
         <section class="recommendations">
             <div class="section-title">
                 <h2>AI Recommended Actions</h2>
@@ -232,9 +237,9 @@
         </section>
     </main>
 
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script type="module" src="./firebase-config.js"></script>
-    <script src="./script.js?v=2"></script>
+    <script src="./script.js"></script>
 </body>
 
 </html>

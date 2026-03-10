@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACCESS.AI | Intelligent Learning Telemetry</title>
+    <title>ACCESS.AI | Home</title>
     <!-- Modern Typography -->
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap"
@@ -13,337 +13,184 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="./styles.css">
     <style>
-        /* Landing Page Specific Styles */
+        /* Specific Home Page Styles */
         body {
-            display: block;
-            min-height: 100vh;
-            background: var(--bg-dark);
-            overflow-x: hidden;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Navbar */
-        .landing-nav {
+        .navbar {
+            width: 100%;
+            padding: 1.5rem 4rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1.5rem 5%;
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
             z-index: 100;
         }
 
-        .landing-nav .logo {
-            margin: 0;
-            font-size: 1.5rem;
+        .navbar .logo {
+            margin-bottom: 0;
         }
 
         .nav-actions {
             display: flex;
-            gap: 1rem;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-main);
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: var(--accent-blue);
-        }
-
-        .btn-glow {
-            background: var(--grad-primary);
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
-            border: none;
-        }
-
-        .btn-glow:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
-        }
-
-        /* Hero Section */
-        .hero {
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 5%;
-            z-index: 10;
-        }
-
-        .hero-bg-glow1 {
-            position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
-            z-index: 1;
-            filter: blur(50px);
-        }
-
-        .hero-bg-glow2 {
-            position: absolute;
-            bottom: 10%;
-            right: 10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(14, 165, 233, 0.1) 0%, transparent 70%);
-            z-index: 1;
-            filter: blur(50px);
-        }
-
-        .hero-content {
-            z-index: 10;
-            max-width: 800px;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .badge-new {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            color: var(--accent-purple);
-            padding: 0.4rem 1rem;
-            border-radius: 50px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .hero h1 {
-            font-size: 4.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
-            font-weight: 800;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .hero-actions {
-            display: flex;
             gap: 1.5rem;
-            justify-content: center;
-        }
-
-        .hero-actions .btn-glow {
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-        }
-
-        .hero-actions .btn-outline {
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
-        }
-
-        /* Features Section */
-        .features {
-            padding: 6rem 5%;
-            position: relative;
-            z-index: 10;
-            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.3));
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-header h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            color: var(--text-muted);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            padding: 2.5rem;
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-light);
-            transition: transform 0.3s ease, background 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(139, 92, 246, 0.3);
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            background: rgba(139, 92, 246, 0.1);
-            color: var(--accent-purple);
         }
 
-        .feature-card.teal .feature-icon {
-            background: rgba(6, 214, 160, 0.1);
-            color: var(--accent-green);
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            transition: color 0.2s;
         }
 
-        .feature-card.blue .feature-icon {
-            background: rgba(14, 165, 233, 0.1);
+        .nav-link:hover {
             color: var(--accent-blue);
         }
 
-        .feature-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1rem;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
-
-        footer {
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
-            padding: 2rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-light);
-            position: relative;
+            max-width: 800px;
+            margin-top: 10vh;
             z-index: 10;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .btn-large {
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-large {
+            background: var(--grad-primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 114, 255, 0.4);
+        }
+
+        .btn-primary-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 114, 255, 0.6);
+        }
+
+        .btn-secondary-large {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--border-light);
+            backdrop-filter: var(--glass-blur);
+        }
+
+        .btn-secondary-large:hover {
+            background: rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .dashboard-preview {
+            margin-top: 4rem;
+            width: 80%;
+            max-width: 1200px;
+            height: 400px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            z-index: 5;
+        }
+
+        .dashboard-preview::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, var(--bg-dark) 100%);
+        }
+
+        .glow-orb-large {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            pointer-events: none;
         }
     </style>
 </head>
 
 <body>
 
-    <nav class="landing-nav">
+    <div class="glow-orb-large"></div>
+
+    <nav class="navbar">
         <div class="logo">
             <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
             <h2>ACCESS.AI</h2>
         </div>
         <div class="nav-actions">
-            <a href="student-login.html" class="btn-outline">Log in</a>
-            <a href="student-login.html" class="btn-glow">Get Started</a>
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">For Students</a>
+            <a href="#" class="nav-link">For Educators</a>
+            <a href="student-login.html" class="nav-link">Sign In</a>
+            <a href="student-login.html" class="btn-primary"
+                style="text-decoration: none; display: inline-block; width: auto;">Get Started</a>
         </div>
     </nav>
 
-    <!-- Decorative Glows -->
-    <div class="hero-bg-glow1"></div>
-    <div class="hero-bg-glow2"></div>
-
-    <section class="hero">
-        <div class="hero-content">
-            <div class="badge-new">
-                <i class="fa-solid fa-sparkles"></i> ACCESS v2.0 Now Live
-            </div>
-            <h1>Unlock Your Potential with <span class="gradient-text">AI Telemetry</span></h1>
-            <p>Go beyond simple test scores. ACCESS.AI analyzes how you learn - including engagement time, pause
-                frequency, and revisit rates to predict and improve your academic performance.</p>
-
-            <div class="hero-actions">
-                <a href="student-login.html" class="btn-glow"><i class="fa-solid fa-rocket"
-                        style="margin-right: 8px;"></i>
-                    Start Your Journey</a>
-                <a href="#features" class="btn-outline"><i class="fa-solid fa-play" style="margin-right: 8px;"></i> How
-                    it works</a>
-            </div>
+    <section class="hero-section">
+        <h1 class="hero-title">Unlock Academic Potential with <span class="gradient-text">Predictive AI</span></h1>
+        <p class="hero-subtitle">
+            ACCESS.AI leverages advanced Machine Learning telemetry to deliver real-time personalized insights, predict
+            learning outcomes, and instantly bridge knowledge gaps for both students and universities.
+        </p>
+        <div class="hero-buttons">
+            <a href="student-login.html" class="btn-large btn-primary-large"><i class="fa-solid fa-user-graduate"></i>
+                Student Login</a>
+            <a href="teacher-login.html" class="btn-large btn-secondary-large"><i
+                    class="fa-solid fa-chalkboard-user"></i> Teacher Login</a>
         </div>
     </section>
 
-    <section id="features" class="features">
-        <div class="section-header">
-            <h2>Intelligent Learning Analytics</h2>
-            <p>We use advanced machine learning algorithms (Random Forests & Neural Networks) to deeply understand your
-                specific learning profile.</p>
-        </div>
 
-        <div class="features-grid">
-            <div class="feature-card glass-card">
-                <div class="feature-icon">
-                    <i class="fa-solid fa-brain"></i>
-                </div>
-                <h3>Performance Prediction</h3>
-                <p>ACCESS.AI looks at your watch time, rewinds, and pause frequency to proactively predict learning
-                    outcomes and flag at-risk concepts before exam time.</p>
-            </div>
-
-            <div class="feature-card glass-card teal">
-                <div class="feature-icon">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <h3>Personalized Pathways</h3>
-                <p>Struggling with Dynamic Programming but acing Arrays? Our engine automatically tailors your course
-                    recommendation pipeline to focus on what you need most.</p>
-            </div>
-
-            <div class="feature-card glass-card blue">
-                <div class="feature-icon">
-                    <i class="fa-solid fa-chalkboard-user"></i>
-                </div>
-                <h3>Teacher Insights</h3>
-                <p>Educators receive aggregated analytics dashboards showing exactly where cohorts are struggling, down
-                    to the specific minute in a lecture video.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 ACCESS.AI Education Platform. Reimagining the future of learning.</p>
-    </footer>
 
 </body>
 
