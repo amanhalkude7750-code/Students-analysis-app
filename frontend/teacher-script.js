@@ -48,9 +48,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const topStudents = data.data.slice(0, 3);
 
                 topStudents.forEach((entry, idx) => {
-                    let color = 'gold';
-                    if (idx === 1) color = 'silver';
-                    if (idx === 2) color = '#cd7f32';
+                    let color = '#333333';
+                    if (idx === 1) color = '#666666';
+                    if (idx === 2) color = '#999999';
 
                     boardContainer.innerHTML += `
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.3rem;">
@@ -259,9 +259,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         titleColor: '#fff',
-                        bodyColor: '#14b8a6',
+                        bodyColor: '#000000',
                         borderColor: 'rgba(255,255,255,0.1)',
                         borderWidth: 1,
                         padding: 10
@@ -329,9 +329,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                             plugins: {
                                 legend: { display: false },
                                 tooltip: {
-                                    backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.9)',
                                     titleColor: '#fff',
-                                    bodyColor: '#f43f5e',
+                                    bodyColor: '#000000',
                                     borderColor: 'rgba(255,255,255,0.1)',
                                     borderWidth: 1,
                                     padding: 10
@@ -353,8 +353,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const hardest = data.data.hardest_section;
                     if (hardest) {
                         analyticsContent.innerHTML = `
-                            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Audience Volume:</strong> <span style="color: var(--accent-blue)">${data.data.total_views} distinct student watches</span> measured.</p>
-                            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Key Anomaly Detected:</strong> Massive difficulty spiking around Timestamp <strong style="color: var(--accent-red); font-size: 1.1rem;">${hardest.formatted_time}</strong>.</p>
+                            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Audience Volume:</strong> <span style="color: var(--text-muted)">${data.data.total_views} distinct student watches</span> measured.</p>
+                            <p style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Key Anomaly Detected:</strong> Massive difficulty spiking around Timestamp <strong style="color: #000000; font-size: 1.1rem;">${hardest.formatted_time}</strong>.</p>
                             <p style="margin-bottom: 0.5rem;"><strong style="color: var(--text-main);">Evidence:</strong> The engine detected <strong>${hardest.metrics.rewind}</strong> distinct back-skips and <strong>${hardest.metrics.pause}</strong> unexpected pauses during this isolated 10-second window.</p>
                             <p style="margin-bottom: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--border-light);"><strong style="color: var(--text-main);">AI Recommendation:</strong> We highly advise the teacher review their lesson delivery around the ${hardest.formatted_time} mark, as it is mathematically creating friction for learners.</p>
                         `;

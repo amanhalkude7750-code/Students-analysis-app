@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         let insightHTML = `<strong><i class="fa-solid fa-robot"></i> Your Analysis:</strong><br>`;
         
         if (studentAnalysis && studentAnalysis.risk_assessment.recommended_actions.length > 0) {
-            insightHTML += `<strong style="color: #14b8a6;">Recommendations:</strong><br>`;
+            insightHTML += `<strong style="color: #444444;">Recommendations:</strong><br>`;
             insightHTML += studentAnalysis.risk_assessment.recommended_actions.slice(0, 3).map(r => `• ${r}`).join('<br>');
         } else if (weakTopics.length > 0) {
             insightHTML += `<strong>Weak Topics:</strong><br>• ${weakTopics.join('<br>• ')}`;
@@ -182,8 +182,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (progressCanvas) {
         const ctxProgress = progressCanvas.getContext('2d');
         const gradientLine = ctxProgress.createLinearGradient(0, 0, 0, 400);
-        gradientLine.addColorStop(0, 'rgba(59, 130, 246, 0.5)');
-        gradientLine.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
+        gradientLine.addColorStop(0, 'rgba(0, 0, 0, 0.2)');
+        gradientLine.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
 
         new Chart(ctxProgress, {
             type: 'line',
@@ -195,11 +195,11 @@ document.addEventListener('DOMContentLoaded', async () => {
                     data: [15, 28, 42, 40, quizAcc - 10, completionScore - 5, Math.max(quizAcc, completionScore)],
                     fill: true,
                     backgroundColor: gradientLine,
-                    borderColor: '#3b82f6',
+                    borderColor: '#000000',
                     borderWidth: 3,
                     tension: 0.4,
                     pointBackgroundColor: '#fff',
-                    pointBorderColor: '#3b82f6',
+                    pointBorderColor: '#000000',
                     pointBorderWidth: 2,
                     pointRadius: 4,
                     pointHoverRadius: 6
@@ -211,9 +211,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         titleColor: '#fff',
-                        bodyColor: '#3b82f6',
+                        bodyColor: '#000000',
                         borderColor: 'rgba(255,255,255,0.1)',
                         borderWidth: 1,
                         padding: 12,
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const heatColors = studyTime.map(val => {
             const intensity = 0.3 + (0.7 * (val / maxStudyTime));
-            return `rgba(249, 115, 22, ${intensity})`;
+            return `rgba(0, 0, 0, ${intensity})`;
         });
 
         new Chart(ctxHeatmap, {
@@ -267,9 +267,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                 plugins: {
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: 'rgba(10, 14, 23, 0.9)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
                         titleColor: '#fff',
-                        bodyColor: '#f97316',
+                        bodyColor: '#000000',
                         borderColor: 'rgba(255,255,255,0.1)',
                         borderWidth: 1,
                         padding: 12,

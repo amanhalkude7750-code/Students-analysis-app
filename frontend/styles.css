@@ -5,7 +5,7 @@
     --border-light: #000000;
 
     --text-main: #000000;
-    --text-muted: #222222;
+    --text-muted: #444444;
 
     --accent-blue: #000000;
     --accent-purple: #222222;
@@ -116,7 +116,7 @@ h4 {
     justify-content: center;
     color: white;
     font-size: 1.2rem;
-    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .logo-icon.teacher-icon {
@@ -162,7 +162,7 @@ h4 {
 .nav-btn.active {
     color: white;
     background: var(--grad-primary);
-    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .nav-btn.active-teacher {
