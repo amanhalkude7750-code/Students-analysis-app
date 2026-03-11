@@ -30,9 +30,11 @@ const HomeMode = () => {
             }
         };
 
-        // Speak intro and start "Alexa" mode (continuous listening)
-        speak(welcomeMessage);
-        startListening(true); // Continuous = true
+        // Speak intro after a short delay to ensure browser allows it
+        const introTimer = setTimeout(() => {
+            speak(welcomeMessage);
+            startListening(true); // Continuous = true
+        }, 800);
 
         const handleInteraction = () => {
             // Ensure AudioContext is unlocked for both Mic and TTS
@@ -70,9 +72,13 @@ const HomeMode = () => {
         window.addEventListener('click', handleInteraction);
 
         return () => {
+            clearTimeout(introTimer);
             window.removeEventListener('keydown', handleKeyDown);
             window.removeEventListener('click', handleInteraction);
             stopListening(); // Important: Stop the continuous loop on unmount
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop talking if we leave the page
+            }
         };
     }, [goToMode, startListening, stopListening]);
 
@@ -101,7 +107,7 @@ const HomeMode = () => {
             console.log("Command Recognized: BLIND");
             speakAndSwitch("Okay, activating Blind Mode.", MODES.BLIND);
         }
-        else if (cmd.includes("sign mode") || cmd.includes("deaf mode")) {
+        else if (cmd.includes("sign mode") || cmd.includes("deaf mode") || cmd.includes("translate")) {
             console.log("Command Recognized: DEAF");
             speakAndSwitch("Understood. Opening Sign Language Translation.", MODES.DEAF);
         }
@@ -109,7 +115,7 @@ const HomeMode = () => {
             console.log("Command Recognized: MOTOR");
             speakAndSwitch("Sure. Initializing Head Tracking Interface.", MODES.MOTOR);
         }
-    }, [transcript, goToMode, stopListening]);
+    }, [transcript, goToMode, stopListening, startListening]);
 
     const ModeCard = ({ mode, title, subtitle, icon: Icon, colorClass, delay }) => (
         <button
