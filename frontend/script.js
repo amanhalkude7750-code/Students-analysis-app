@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 1. FETCH ACTUAL STUDENT DATA FROM BACKEND CSV
     let studentAnalysis = null;
     try {
-        const response = await fetch(`http://localhost:3000/api/v1/students/${studentId}`);
+        const response = await fetch(`/api/v1/students/${studentId}`);
         const db = await response.json();
         if (db.success && db.data) {
             studentAnalysis = db.data;
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let studentData = null;
     if (!studentAnalysis) {
         try {
-            const response = await fetch('http://localhost:3000/api/v1/analytics');
+            const response = await fetch('/api/v1/analytics');
             const db = await response.json();
             if (db && db.data && db.data.mlDataset && db.data.mlDataset.length > 0) {
                 studentData = db.data.mlDataset[0];
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. FETCH PREDICTIONS FROM AI PIPELINE SERVICES
     try {
         // AI Prediction - Final Score
-        const resPerf = await fetch('http://localhost:3000/api/ai/predict-performance', {
+        const resPerf = await fetch('/api/ai/predict-performance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('ui-predicted-score').innerText = perfData.data?.predicted_score || "78%";
 
         // AI Prediction - Dropout Risk
-        const resRisk = await fetch('http://localhost:3000/api/ai/predict-risk', {
+        const resRisk = await fetch('/api/ai/predict-risk', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // Task 8: Fetch Complete Recommendation Pipeline
-        const resPipeline = await fetch(`http://localhost:3000/api/recommendations/${studentId}`);
+        const resPipeline = await fetch(`/api/recommendations/${studentId}`);
         const pipelineData = await resPipeline.json();
 
         const weakTopics = pipelineData.data?.weak_topics || [];

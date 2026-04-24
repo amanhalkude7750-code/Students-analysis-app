@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ====== FETCH CLASS ANALYTICS DATA FROM NEW ENDPOINT ======
     let classAnalytics = null;
     try {
-        const res = await fetch('http://localhost:3000/api/v1/students/analytics/dashboard');
+        const res = await fetch('/api/v1/students/analytics/dashboard');
         const data = await res.json();
         if (data.success) {
             classAnalytics = data.data;
@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!boardContainer) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/v1/leaderboard');
-            const data = await res.json();
+            const response = await fetch('/api/v1/leaderboard');
+            const data = await response.json();
 
             if (data.success && data.data && data.data.length > 0) {
                 boardContainer.innerHTML = ''; // clear loading state
@@ -74,8 +74,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!tbody) return;
 
         try {
-            const res = await fetch('http://localhost:3000/api/v1/students/analytics/dashboard');
-            const data = await res.json();
+            const response = await fetch('/api/v1/students/analytics/dashboard');
+            const data = await response.json();
 
             if (data.success && data.data && data.data.at_risk_students) {
                 const atRiskStudents = data.data.at_risk_students.slice(0, 4);
@@ -158,8 +158,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Monitor each at-risk student's activity
         for (const student of classAnalytics.at_risk_students.slice(0, 5)) {
             try {
-                const res = await fetch(`http://localhost:3000/api/v1/students/${student.student_id}/activity`);
-                const activityData = await res.json();
+                const response = await fetch(`/api/v1/students/${student.student_id}/activity`);
+                const activityData = await response.json();
                 
                 if (activityData.success && activityData.data) {
                     const activity = activityData.data;
@@ -293,8 +293,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         async function fetchVideoAnalytics() {
             try {
                 // Fetch live telemetry for Course ID 1
-                const res = await fetch('http://localhost:3000/api/v1/video-analytics/1');
-                const data = await res.json();
+                const courseId = 1; // Assuming course ID is 1 for this dashboard
+                const response = await fetch(`/api/v1/video-analytics/${courseId}`);
+                const data = await response.json();
 
                 if (data.success && data.data && data.data.hotspots.length > 0) {
 

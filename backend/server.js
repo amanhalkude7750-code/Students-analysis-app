@@ -4,11 +4,33 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+// Gemini AI (merged from Access-ai-main)
+let genAI = null;
+try {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'YOUR_API_KEY_HERE');
+    console.log('✅ Gemini AI SDK loaded.');
+} catch (e) {
+    console.warn('⚠️  @google/generative-ai not installed. Translation will use mock mode.');
+}
+
+// SQLite History (merged from Access-ai-main)
+let History = null;
+try {
+    const sequelize = require('./database_sqlite');
+    History = require('./History');
+    sequelize.sync().then(() => console.log('✅ SQLite DB synced.'));
+} catch (e) {
+    console.warn('⚠️  SQLite not available. History will not be saved.');
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 
 // Load raw events
 const eventsPath = path.join(__dirname, '../database', 'raw_events_data.json');
@@ -59,6 +81,20 @@ if (fs.existsSync(csvPath)) {
 } else {
     console.warn('⚠️  CSV file not found at:', csvPath);
 }
+
+// Load Notes Data
+const notesDbPath = path.join(__dirname, '../database', 'notes_db.json');
+let savedNotes = [];
+
+if (fs.existsSync(notesDbPath)) {
+    try {
+        savedNotes = JSON.parse(fs.readFileSync(notesDbPath, 'utf8'));
+        console.log(`✅ Loaded ${savedNotes.length} saved notes.`);
+    } catch (err) {
+        console.error('Failed to load notes:', err.message);
+    }
+}
+
 
 // =====================================================
 // API ENDPOINTS
@@ -223,6 +259,17 @@ app.get('/api/v1/students/:student_id/activity', (req, res) => {
     }
 });
 
+// Get student notes
+app.get('/api/v1/notes/:student_id', (req, res) => {
+    try {
+        const { student_id } = req.params;
+        const studentNotes = savedNotes.filter(n => n.student_id == student_id);
+        res.json({ success: true, data: studentNotes });
+    } catch (err) {
+        res.status(500).json({ success: false, message: err.message });
+    }
+});
+
 // Save student notes and generate summary
 app.post('/api/v1/notes', (req, res) => {
     try {
@@ -234,12 +281,10 @@ app.post('/api/v1/notes', (req, res) => {
 
         // Simple AI-like summarization: extract key phrases
         const sentences = notes.split(/[.!?]+/).filter(s => s.trim().length > 0);
-        const words = notes.split(/\s+/).filter(w => w.trim().length > 3);
         
         // Create a summary by selecting important sentences
         let summary = '';
         if (sentences.length > 0) {
-            // Take first and longest sentences as summary
             const importantSentences = sentences
                 .sort((a, b) => b.trim().split(/\s+/).length - a.trim().split(/\s+/).length)
                 .slice(0, Math.min(3, sentences.length))
@@ -248,9 +293,27 @@ app.post('/api/v1/notes', (req, res) => {
             summary = importantSentences.join('. ') + '.';
         }
 
-        // If summary is still too long or empty, use a different approach
         if (summary.length === 0 || summary.length > 200) {
             summary = notes.substring(0, 150).trim() + (notes.length > 150 ? '...' : '');
+        }
+
+        // --- NEW: Actually Save the Note ---
+        const newNote = {
+            id: Date.now(),
+            student_id: student_id,
+            course_id: course_id || 'General',
+            notes: notes,
+            summary: summary,
+            timestamp: new Date().toISOString()
+        };
+
+        savedNotes.push(newNote);
+
+        // Persist to disk
+        try {
+            fs.writeFileSync(notesDbPath, JSON.stringify(savedNotes, null, 2));
+        } catch (fsErr) {
+            console.error("Failed to save note to disk:", fsErr);
         }
 
         res.json({
@@ -258,12 +321,13 @@ app.post('/api/v1/notes', (req, res) => {
             message: "Notes saved successfully",
             summary: `Summary: ${summary}`,
             notes_count: sentences.length,
-            words_count: words.length
+            data: newNote
         });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
     }
 });
+
 
 // Get leaderboard rankings
 app.get('/api/v1/leaderboard', (req, res) => {
@@ -297,6 +361,97 @@ app.get('/api/v1/leaderboard', (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 });
+
+// -----------------------------------------------------
+// Video Interaction Analytics
+// -----------------------------------------------------
+const videoInteractions = [];
+
+/**
+ * @route POST /api/v1/video-events
+ * @desc Log a student interacting with the video timeline
+ */
+app.post('/api/v1/video-events', (req, res) => {
+    const { course_id, student_id, action, timestamp_sec } = req.body;
+
+    if (!course_id || !student_id || !action || timestamp_sec === undefined) {
+        return res.status(400).json({ success: false, message: "Missing required fields" });
+    }
+
+    videoInteractions.push({
+        course_id,
+        student_id,
+        action,
+        timestamp_sec: Math.floor(timestamp_sec),
+        actual_time: new Date()
+    });
+
+    res.json({ success: true, message: "Event logged" });
+});
+
+/**
+ * @route GET /api/v1/video-analytics/:course_id
+ * @desc Process raw interactions into difficulty hotspots
+ */
+app.get('/api/v1/video-analytics/:course_id', (req, res) => {
+    const { course_id } = req.params;
+
+    // Filter events for this video
+    const courseEvents = videoInteractions.filter(e => e.course_id == course_id);
+
+    // Count views (fallback to mock if no real events yet)
+    const uniqueStudents = new Set(courseEvents.map(e => e.student_id)).size;
+    const totalViews = uniqueStudents > 0 ? uniqueStudents : 15;
+
+    const timeBlocks = {};
+
+    courseEvents.forEach(event => {
+        const bucket = Math.floor(event.timestamp_sec / 10) * 10;
+        if (!timeBlocks[bucket]) {
+            timeBlocks[bucket] = { pause: 0, rewind: 0, skip: 0, total_friction: 0 };
+        }
+        timeBlocks[bucket][event.action]++;
+        if (event.action === "rewind") timeBlocks[bucket].total_friction += 2;
+        if (event.action === "pause") timeBlocks[bucket].total_friction += 1;
+    });
+
+    const sortedHotspots = Object.keys(timeBlocks)
+        .map(sec => ({
+            timestamp_sec: parseInt(sec),
+            formatted_time: `${Math.floor(sec / 60)}:${(parseInt(sec) % 60).toString().padStart(2, '0')}`,
+            metrics: timeBlocks[sec]
+        }))
+        .sort((a, b) => a.timestamp_sec - b.timestamp_sec);
+
+    let hardestSection = null;
+    let maxFriction = 0;
+    sortedHotspots.forEach(spot => {
+        if (spot.metrics.total_friction > maxFriction) {
+            maxFriction = spot.metrics.total_friction;
+            hardestSection = spot;
+        }
+    });
+
+    res.json({
+        success: true,
+        data: {
+            total_views: totalViews,
+            hotspots: sortedHotspots,
+            hardest_section: hardestSection
+        }
+    });
+});
+
+// Quiz Result Endpoint
+app.post('/api/v1/quiz', (req, res) => {
+    const { student_id, student_name, score } = req.body;
+    if (!student_id || score === undefined) {
+        return res.status(400).json({ success: false, message: "Missing student_id or score" });
+    }
+    // In a real app we'd save this to a DB. For now, we'll just acknowledge.
+    res.json({ success: true, message: "Quiz result received" });
+});
+
 
 // Get all available courses
 app.get('/api/v1/courses', (req, res) => {
@@ -530,14 +685,6 @@ app.get('/api/v1/analytics', (req, res) => {
     });
 });
 
-app.get('/api/v1/courses', (req, res) => {
-    const mockCourses = [
-        { id: 1, title: "Data Structures & Algorithms", instructor: "Prof. Vrusha", progress: 68, totalModules: 20, completedModules: 12 },
-        { id: 2, title: "Advanced Graph Theory", instructor: "Dr. Smith", progress: 45, totalModules: 15, completedModules: 6 },
-        { id: 3, title: "Dynamic Programming Masterclass", instructor: "Prof. Vrusha", progress: 32, totalModules: 10, completedModules: 3 }
-    ];
-    res.json({ success: true, data: mockCourses });
-});
 
 app.post('/api/ai/predict-performance', (req, res) => {
     const { quiz_accuracy, avg_video_completion, revisit_rate, study_time_per_day } = req.body;
@@ -564,19 +711,32 @@ app.post('/api/ai/predict-performance', (req, res) => {
     });
 });
 
-app.post('/api/ai/predict-risk', (req, res) => {
-    const riskScore = Math.random() * 100;
-    let riskLevel = 'LOW';
-    if (riskScore > 70) riskLevel = 'HIGH';
-    else if (riskScore > 40) riskLevel = 'MEDIUM';
+app.post('/api/ai/predict-risk', async (req, res) => {
+    try {
+        // Try to call the Python AI server if it's running
+        const response = await axios.post(
+            "http://localhost:8000/predict",
+            req.body,
+            { timeout: 2000 }
+        );
+        res.json({ success: true, data: response.data });
+    } catch (error) {
+        // Fallback to randomized simulation if AI server is down
+        console.warn("AI Server (port 8000) not reached, using simulation fallback");
+        const riskScore = Math.random() * 100;
+        let riskLevel = 'LOW';
+        if (riskScore > 70) riskLevel = 'HIGH';
+        else if (riskScore > 40) riskLevel = 'MEDIUM';
 
-    res.json({
-        success: true,
-        data: {
-            risk_level: riskLevel,
-            confidence: riskScore / 100
-        }
-    });
+        res.json({
+            success: true,
+            data: {
+                risk_level: riskLevel,
+                confidence: riskScore / 100,
+                is_simulation: true
+            }
+        });
+    }
 });
 
 app.get('/api/recommendations/:student_id', (req, res) => {
@@ -594,16 +754,80 @@ app.get('/api/recommendations/:student_id', (req, res) => {
     });
 });
 
+// =====================================================
+// GEMINI TRANSLATE & HISTORY (merged from Access-ai-main)
+// =====================================================
+
+// Translate sign language tokens to fluent sentence
+app.post('/api/translate', async (req, res) => {
+    try {
+        const { tokens } = req.body;
+
+        if (!tokens || !Array.isArray(tokens) || tokens.length === 0) {
+            return res.status(400).json({ error: 'Invalid tokens provided' });
+        }
+
+        const rawTokens = tokens.map(t => t.token || t).join(' ');
+        console.log('Translation Request for:', rawTokens);
+
+        let responseText = '';
+
+        if (!genAI || !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+            console.warn('No Gemini API Key, using fallback.');
+            responseText = `(SIMULATED AI): Translated "${rawTokens}" into a fluent sentence. [Please set GEMINI_API_KEY]`;
+        } else {
+            const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+            const prompt = `You are a Sign Language Translator. Convert this sequence of sign tokens into a natural, fluent, and polite English sentence. Account for grammar, context, and potential emotional tone.\n\nTokens: [${rawTokens}]\n\nOutput just the sentence.`;
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            responseText = response.text();
+        }
+
+        // Save to SQLite history if available
+        if (History) {
+            try {
+                await History.create({ input: rawTokens, output: responseText, mode: 'DEAF' });
+            } catch (e) {
+                console.warn('Failed to save history:', e.message);
+            }
+        }
+
+        res.json({ response: responseText });
+    } catch (error) {
+        console.error('Translation Error:', error);
+        res.status(500).json({ error: 'Failed to process translation', details: error.message });
+    }
+});
+
+// Get translation history
+app.get('/api/history', async (req, res) => {
+    try {
+        if (!History) {
+            return res.json({ history: [] });
+        }
+        const history = await History.findAll({
+            order: [['timestamp', 'DESC']],
+            limit: 50
+        });
+        res.json({ history });
+    } catch (error) {
+        console.error('Fetch History Error:', error);
+        res.status(500).json({ error: 'Failed to fetch history' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`\n✅ ACCESS.AI Analytics API Started`);
     console.log(`📡 Server: http://localhost:${PORT}`);
     console.log(`📊 Students Loaded: ${studentDataset.length}`);
     console.log(`\n📍 API Endpoints:`);
-    console.log(`   GET /api/v1/students`);
-    console.log(`   GET /api/v1/students/:id`);
-    console.log(`   GET /api/v1/students/analytics/dashboard`);
-    console.log(`   GET /api/v1/students/:id/activity`);
+    console.log(`   GET  /api/v1/students`);
+    console.log(`   GET  /api/v1/students/:id`);
+    console.log(`   GET  /api/v1/students/analytics/dashboard`);
+    console.log(`   GET  /api/v1/students/:id/activity`);
     console.log(`   POST /api/v1/notes`);
-    console.log(`   GET /api/v1/leaderboard`);
-    console.log(`   GET /api/v1/courses\n`);
+    console.log(`   GET  /api/v1/leaderboard`);
+    console.log(`   GET  /api/v1/courses`);
+    console.log(`   POST /api/translate`);
+    console.log(`   GET  /api/history\n`);
 });

@@ -24,10 +24,33 @@
     --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+}
+
+html, body {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 body {
@@ -36,7 +59,6 @@ body {
     font-family: var(--font-body);
     display: flex;
     min-height: 100vh;
-    overflow-x: hidden;
 }
 
 body.teacher-mode {
@@ -202,11 +224,13 @@ h4 {
 /* --- Main Content --- */
 .main-content {
     flex: 1;
-    padding: 2rem 3rem;
+    padding: 1.5rem 2rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+    min-width: 0;
 }
+
 
 .topbar {
     display: flex;
@@ -222,8 +246,10 @@ h4 {
     border: 1px solid var(--border-light);
     padding: 0.8rem 1.2rem;
     border-radius: 20px;
-    width: 350px;
+    width: 100%;
+    max-width: 350px;
 }
+
 
 .search-bar input {
     background: transparent;
@@ -287,9 +313,10 @@ h4 {
 /* Base Metrics Grid */
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
 }
+
 
 .metric-card {
     padding: 1.5rem;
@@ -380,9 +407,10 @@ h4 {
 /* Dashboard Widgets Split */
 .dashboard-widgets {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
     gap: 1.5rem;
 }
+
 
 .widget {
     padding: 1.5rem;
@@ -407,6 +435,41 @@ h4 {
 .widget-header h2 i {
     color: var(--accent-blue);
 }
+
+/* Quick Navigation Links */
+.filter-link {
+    text-decoration: none;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-light);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 140px;
+    font-weight: 500;
+}
+
+.filter-link i {
+    font-size: 1.5rem;
+    color: var(--accent-purple);
+    transition: transform 0.3s ease;
+}
+
+.filter-link:hover {
+    background: var(--bg-panel);
+    border-color: var(--accent-purple);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-soft);
+}
+
+.filter-link:hover i {
+    transform: scale(1.2);
+}
+
 
 
 /* Mastery Bars */
@@ -538,28 +601,42 @@ h4 {
 /* Table Styling for Interventions */
 .data-table {
     width: 100%;
+    min-width: 750px; /* More compact minimum width */
     border-collapse: collapse;
     margin-top: 0.5rem;
+    table-layout: auto;
 }
 
-.data-table th,
-.data-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid var(--border-light);
+.data-table thead {
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .data-table th {
-    font-weight: 500;
+    padding: 0.8rem 0.5rem;
+    font-weight: 600;
+    font-size: 0.75rem; /* Smaller font */
     color: var(--text-muted);
-    font-size: 0.85rem;
     text-transform: uppercase;
+    letter-spacing: 0.02rem;
+    border-bottom: 2px solid var(--border-light);
+    white-space: nowrap;
 }
 
 .data-table td {
-    font-size: 0.9rem;
-    color: var(--text-main);
+    padding: 0.6rem 0.5rem; /* Tighter padding */
+    vertical-align: middle;
+    font-size: 0.85rem; /* Smaller font */
+    border-bottom: 1px solid var(--border-light);
 }
+
+.data-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+
 
 .status-badge {
     padding: 4px 10px;
@@ -800,3 +877,14 @@ h4 {
         padding: 1rem;
     }
 }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

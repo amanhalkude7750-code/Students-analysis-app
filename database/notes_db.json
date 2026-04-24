@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1773201482364,
+    "student_id": 101,
+    "course_id": 1,
+    "notes": "This is my first note about recursion.",
+    "summary": "This is my first note about recursion.",
+    "timestamp": "2026-03-11T03:58:02.364Z"
+  },
+  {
+    "id": 1773201482443,
+    "student_id": 101,
+    "course_id": 1,
+    "notes": "This is my second note about graph traversal.",
+    "summary": "This is my second note about graph traversal.",
+    "timestamp": "2026-03-11T03:58:02.443Z"
+  },
+  {
+    "id": 1773203185967,
+    "student_id": 101,
+    "course_id": 1,
+    "notes": "hi",
+    "summary": "hi.",
+    "timestamp": "2026-03-11T04:26:25.967Z"
+  },
+  {
+    "id": 1773203536161,
+    "student_id": 101,
+    "course_id": 1,
+    "notes": "afa",
+    "summary": "afa.",
+    "timestamp": "2026-03-11T04:32:16.161Z"
+  },
+  {
+    "id": 1773209139913,
+    "student_id": 101,
+    "course_id": 1,
+    "notes": "hi",
+    "summary": "hi.",
+    "timestamp": "2026-03-11T06:05:39.913Z"
+  }
+]

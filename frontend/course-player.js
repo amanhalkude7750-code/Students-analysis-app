@@ -63,13 +63,17 @@ function onPlayerStateChange(event) {
 }
 
 async function logVideoEvent(action, timestamp) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sId = urlParams.get('student_id') || localStorage.getItem('studentId') || 101;
+    const cId = urlParams.get('id') || 1;
+
     try {
-        await fetch('http://localhost:3000/api/v1/video-events', {
+        await fetch('/api/v1/video-events', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                course_id: 1, // Mocked course id
-                student_id: 101, // Mocked student
+                course_id: cId,
+                student_id: sId,
                 action: action,
                 timestamp_sec: timestamp
             })
@@ -156,12 +160,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const percentage = Math.round((score / 10) * 100);
 
         try {
-            await fetch('http://localhost:3000/api/v1/quiz', {
+            await fetch('/api/v1/quiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    student_id: 101,
-                    student_name: "Alex Researcher",
+                    student_id: studentId,
+                    student_name: JSON.parse(localStorage.getItem('activeUser') || '{}').name || "Alex Researcher",
                     score: percentage
                 })
             });
@@ -176,6 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else quizResultText.style.color = 'var(--accent-red)';
     });
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('student_id') || localStorage.getItem('studentId') || 101;
+    const courseId = urlParams.get('id') || 1;
+
     // 3. Save Notes & Get AI Summarization
     saveNotesBtn.addEventListener('click', async () => {
         const text = studentNotes.value.trim();
@@ -188,14 +196,14 @@ document.addEventListener('DOMContentLoaded', () => {
         saveNotesBtn.disabled = true;
 
         try {
-            // Use mocked standard values for payload context
+            // Use dynamic student and course IDs
             const payload = {
-                student_id: 101, // Alex Researcher standard ID
-                course_id: 1,
+                student_id: studentId,
+                course_id: courseId,
                 notes: text
             };
 
-            const response = await fetch('http://localhost:3000/api/v1/notes', {
+            const response = await fetch('/api/v1/notes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

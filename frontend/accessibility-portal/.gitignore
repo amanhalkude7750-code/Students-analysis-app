@@ -1,8 +1,0 @@
-node_modules/
-client/node_modules/
-server/venv/
-*.pyc
-__pycache__/
-dist/
-build/
-/.env

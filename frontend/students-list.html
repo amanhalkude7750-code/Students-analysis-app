@@ -33,38 +33,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        .students-table {
-            width: 100%;
-            overflow-x: auto;
-        }
 
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table thead {
-            background: rgba(0, 0, 0, 0.2);
-        }
-
-        .data-table th {
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .data-table td {
-            padding: 0.8rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
-        }
-
-        .data-table tbody tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
 
         .student-name {
             font-weight: 600;
@@ -344,17 +313,17 @@
                     </select>
                 </div>
 
-                <div class="students-table">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>Student</th>
-                                <th>Class & Subject</th>
+                                <th>Class & Sub.</th>
                                 <th>Marks</th>
-                                <th>Quiz Accuracy</th>
-                                <th>Attendance</th>
-                                <th>Engagement</th>
-                                <th>Risk Level</th>
+                                <th>Quiz Acc.</th>
+                                <th>Attend.</th>
+                                <th>Engage.</th>
+                                <th>Risk</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -402,7 +371,7 @@
 
         async function fetchStudents() {
             try {
-                const response = await fetch('http://localhost:3000/api/v1/students');
+                const response = await fetch('/api/v1/students');
                 const data = await response.json();
 
                 if (data.success && data.data) {
@@ -506,7 +475,7 @@
         async function updateActivityIndicators(students) {
             for (const student of students) {
                 try {
-                    const response = await fetch(`http://localhost:3000/api/v1/students/${student.student_id}/activity`);
+                    const response = await fetch(`/api/v1/students/${student.student_id}/activity`);
                     if (response.ok) {
                         const activityData = await response.json();
                         const indicator = document.getElementById(`sync-${student.student_id}`);
@@ -559,7 +528,7 @@
 
         async function viewStudentDetails(studentId) {
             try {
-                const response = await fetch(`http://localhost:3000/api/v1/students/${studentId}`);
+                const response = await fetch(`/api/v1/students/${studentId}`);
                 const data = await response.json();
 
                 if (data.success && data.data) {

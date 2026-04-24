@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/v1/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/api/ai/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
       "source": "/",
       "destination": "/frontend/home.html"
     },
@@ -13,8 +21,8 @@
       "destination": "/frontend/accessibility-portal/index.html"
     },
     {
-      "source": "/:path*",
-      "destination": "/frontend/:path*"
+      "source": "/:path((?!api/).*)",
+      "destination": "/frontend/:path"
     }
   ]
 }

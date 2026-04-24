@@ -48,7 +48,7 @@
             </div>
         </header>
 
-        <!-- Welcome / Warning Banner -->
+        <!-- Welcome / Warning Banner -->   
         <section class="banner glass-card teacher-banner">
             <div class="banner-text">
                 <h1>Class Overview: <span class="gradient-text-orange">Data Structures</span></h1>
@@ -140,60 +140,62 @@
                     <button class="btn-primary" style="width: auto; padding: 0.4rem 1rem;">Export List</button>
                 </div>
 
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Class details</th>
-                            <th>Marks & Attend.</th>
-                            <th>Risk Level</th>
-                            <th>AI Reason</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Rahul K.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 10th - Mathematics</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>42/100</b><br />Att: <b>125/220</b></span></td>
-                            <td><span class="status-badge high-risk">High</span></td>
-                            <td>Low activity, 12 days inactive</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Sneha P.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 9th - Science</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>35/100</b><br />Att: <b>180/220</b></span></td>
-                            <td><span class="status-badge med-risk">Medium</span></td>
-                            <td>Low quiz scores (Avg 35%)</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Aman D.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 11th - Computer Sci</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>85/100</b><br />Att: <b>205/220</b></span></td>
-                            <td><span class="status-badge high-risk">High</span></td>
-                            <td>High video drop-off (65%) + Disciplinary</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                        <tr>
-                            <td>Priya S.</td>
-                            <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
-                                        class="fa-solid fa-graduation-cap"></i> 12th - Physics</span></td>
-                            <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
-                                    <b>60/100</b><br />Att: <b>190/220</b></span></td>
-                            <td><span class="status-badge med-risk">Medium</span></td>
-                            <td>Struggling with subject matter</td>
-                            <td><button class="action-btn">Message</button></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Class</th>
+                                <th>Marks/Att.</th>
+                                <th>Risk</th>
+                                <th>AI Reason</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rahul K.</td>
+                                <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
+                                            class="fa-solid fa-graduation-cap"></i> 10th - Mathematics</span></td>
+                                <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
+                                        <b>42/100</b><br />Att: <b>125/220</b></span></td>
+                                <td><span class="status-badge high-risk">High</span></td>
+                                <td>Low activity, 12 days inactive</td>
+                                <td><button class="action-btn">Message</button></td>
+                            </tr>
+                            <tr>
+                                <td>Sneha P.</td>
+                                <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
+                                            class="fa-solid fa-graduation-cap"></i> 9th - Science</span></td>
+                                <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
+                                        <b>35/100</b><br />Att: <b>180/220</b></span></td>
+                                <td><span class="status-badge med-risk">Medium</span></td>
+                                <td>Low quiz scores (Avg 35%)</td>
+                                <td><button class="action-btn">Message</button></td>
+                            </tr>
+                            <tr>
+                                <td>Aman D.</td>
+                                <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
+                                            class="fa-solid fa-graduation-cap"></i> 11th - Computer Sci</span></td>
+                                <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
+                                        <b>85/100</b><br />Att: <b>205/220</b></span></td>
+                                <td><span class="status-badge high-risk">High</span></td>
+                                <td>High video drop-off (65%) + Disciplinary</td>
+                                <td><button class="action-btn">Message</button></td>
+                            </tr>
+                            <tr>
+                                <td>Priya S.</td>
+                                <td><span style="font-size:0.85rem; color:var(--text-muted);"><i
+                                            class="fa-solid fa-graduation-cap"></i> 12th - Physics</span></td>
+                                <td><span style="font-size:0.85rem; color:calc(var(--text-main) * 0.8);">Marks:
+                                        <b>60/100</b><br />Att: <b>190/220</b></span></td>
+                                <td><span class="status-badge med-risk">Medium</span></td>
+                                <td>Struggling with subject matter</td>
+                                <td><button class="action-btn">Message</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
         </section>

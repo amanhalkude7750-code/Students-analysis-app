@@ -116,7 +116,7 @@
 
             try {
                 // Fetch leaderboard from backend API
-                const res = await fetch('http://localhost:3000/api/v1/leaderboard');
+                const res = await fetch('/api/v1/leaderboard');
                 const data = await res.json();
 
                 if (data.success && data.data && data.data.length > 0) {

@@ -1,7 +1,6 @@
 backend/node_modules
 sign-language-translator
 CHK-1772699441588-6138
-database
 venv
 .venv
 pip_list.txt
