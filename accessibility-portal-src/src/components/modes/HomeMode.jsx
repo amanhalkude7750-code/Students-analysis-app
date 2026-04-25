@@ -8,7 +8,7 @@ const HomeMode = () => {
 
     const goToMode = React.useCallback((mode) => {
         switch (mode) {
-            case MODES.DEAF: navigate('/deaf'); break;
+            case MODES.DEAF: navigate('/deaf/menu'); break;
             case MODES.BLIND: navigate('/blind'); break;
             case MODES.MOTOR: navigate('/motor'); break;
             default: navigate('/');
