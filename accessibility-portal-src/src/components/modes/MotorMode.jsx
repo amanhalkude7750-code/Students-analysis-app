@@ -15,6 +15,15 @@ const MotorMode = () => {
     const [pendingAction, setPendingAction] = useState(null); // { type: 'NEXT', label: 'Go to Next Section?' }
     const [hudState, setHudState] = useState({ command: "WAITING...", gesture: "--", action: "--" });
 
+    useEffect(() => {
+        setIsTracking(true);
+        startListening(true);
+        return () => {
+            setIsTracking(false);
+            stopListening();
+        };
+    }, [setIsTracking, startListening, stopListening]);
+
     // DWELL CLICK STATE
     const [dwellProgress, setDwellProgress] = useState(0);
     const lastHoveredEl = useRef(null);

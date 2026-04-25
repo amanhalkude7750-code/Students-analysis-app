@@ -4,6 +4,16 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
+let genAI = null;
+try {
+    const { GoogleGenerativeAI } = require('@google/generative-ai');
+    if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'YOUR_API_KEY_HERE') {
+        genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    }
+} catch (e) {
+    console.warn('⚠️  @google/generative-ai not installed. Translation will use mock mode.');
+}
+
 const app = express();
 
 app.use(cors());
@@ -165,6 +175,36 @@ const videoInteractions = [];
 app.post('/api/v1/video-events', (req, res) => {
     videoInteractions.push(req.body);
     res.json({ success: true });
+});
+
+app.post('/api/translate', async (req, res) => {
+    try {
+        const { tokens } = req.body;
+
+        if (!tokens || !Array.isArray(tokens) || tokens.length === 0) {
+            return res.status(400).json({ error: 'Invalid tokens provided' });
+        }
+
+        const rawTokens = tokens.map(t => t.token || t).join(' ');
+        console.log('[Vercel API] Translation Request for:', rawTokens);
+
+        let responseText = '';
+
+        if (!genAI || !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'YOUR_API_KEY_HERE') {
+            console.warn('[Vercel API] No Gemini API Key, using fallback.');
+            responseText = `(SIMULATED AI): Translated "${rawTokens}" into a fluent sentence. [Please set GEMINI_API_KEY]`;
+        } else {
+            const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+            const prompt = `You are a Sign Language Translator. Convert this sequence of sign tokens into a natural, fluent, and polite English sentence. Account for grammar, context, and potential emotional tone.\n\nTokens: [${rawTokens}]\n\nOutput just the sentence.`;
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            responseText = response.text();
+        }
+        res.json({ response: responseText });
+    } catch (error) {
+        console.error('[Vercel API] Translation Error:', error);
+        res.status(500).json({ error: 'Translation failed' });
+    }
 });
 
 app.get('/api/v1/video-analytics/:course_id', (req, res) => {
