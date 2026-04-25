@@ -30,7 +30,7 @@ const MOCK_ORACLE = [
     }
 ];
 
-const API_URL = "http://localhost:3000/api/translate";
+const API_URL = "/api/translate";
 const DEMO_MODE = true; // Set to true to avoid network errors during frontend-only development
 
 export const reconstructSentence = async (tokens) => {
